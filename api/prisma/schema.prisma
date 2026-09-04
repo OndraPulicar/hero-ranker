@@ -1,0 +1,80 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Series {
+  id                  Int       @id @default(autoincrement())
+  title               String
+  yearOfProduction    Int
+  isLimited           Boolean   @default(false)
+  createdAt           DateTime  @default(now())
+
+  seasons             Season[]
+  characters          Character[]
+
+  @@index([title])
+}
+
+model Season {
+  id                Int       @id @default(autoincrement())
+  seasonNumber      Int
+  alternativeTitle  String?
+  seriesId          Int
+  createdAt         DateTime  @default(now())
+
+  series Series @relation(fields: [seriesId], references: [id])
+  characters Character[]
+
+  @@unique([seriesId, seasonNumber])
+}
+
+model Character {
+  id                    Int       @id @default(autoincrement())
+  name                  String
+  alternativeName       String?
+  seriesId              Int
+  appearsInAllSeasons   Boolean   @default(true)
+  createdAt             DateTime  @default(now())
+
+  series Series @relation(fields: [seriesId], references: [id])
+  seasons               Season[]
+  votes                 Vote[]
+
+  @@index([name])
+  @@index([alternativeName])
+}
+
+model User {
+  id          Int       @id @default(autoincrement())
+  username    String
+  email       String    @unique
+  createdAt   DateTime  @default(now())
+
+  votes       Vote[]
+}
+
+model Vote {
+  id            Int       @id @default(autoincrement())
+  characterId   Int
+  userId        Int
+  isEvil        Boolean   @default(false)
+  points        Int
+  createdAt     DateTime  @default(now())
+
+  character Character @relation(fields: [characterId], references: [id])
+  user User @relation(fields: [userId], references: [id])
+
+  @@unique([characterId, userId])
+}
