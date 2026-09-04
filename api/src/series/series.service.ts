@@ -11,7 +11,17 @@ export class SeriesService {
 
     async getSeriesById(id: number) {
         const series = await this.prismaService.series.findUnique({
-            where: { id },
+            where: {
+                id: id,
+            },
+            include: {
+                characters: true,
+                seasons: {
+                    include: {
+                        characters: true,
+                    },
+                },
+            },
         });
 
         if (!series) {
