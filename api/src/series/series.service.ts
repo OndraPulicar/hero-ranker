@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
@@ -7,5 +7,17 @@ export class SeriesService {
 
     getSeries() {
         return this.prismaService.series.findMany();
+    }
+
+    async getSeriesById(id: number) {
+        const series = await this.prismaService.series.findUnique({
+            where: { id },
+        });
+
+        if (!series) {
+            throw new NotFoundException(`Series with id ${id} not found`);
+        }
+
+        return series;
     }
 }
