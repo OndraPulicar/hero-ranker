@@ -26,6 +26,7 @@ const config: runtime.GetPrismaClientConfig = {
       "fromEnvVar": null
     },
     "config": {
+      "moduleFormat": "cjs",
       "engineType": "library"
     },
     "binaryTargets": [
@@ -46,6 +47,7 @@ const config: runtime.GetPrismaClientConfig = {
     "db"
   ],
   "activeProvider": "postgresql",
+  "postinstall": false,
   "inlineDatasources": {
     "db": {
       "url": {
@@ -54,8 +56,8 @@ const config: runtime.GetPrismaClientConfig = {
       }
     }
   },
-  "inlineSchema": "// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\n// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?\n// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init\n\ngenerator client {\n  provider = \"prisma-client\"\n  output   = \"../generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nmodel Series {\n  id               Int      @id @default(autoincrement())\n  title            String\n  yearOfProduction Int\n  isLimited        Boolean  @default(false)\n  createdAt        DateTime @default(now())\n\n  seasons    Season[]\n  characters Character[]\n\n  @@index([title])\n}\n\nmodel Season {\n  id               Int      @id @default(autoincrement())\n  seasonNumber     Int\n  alternativeTitle String?\n  seriesId         Int\n  createdAt        DateTime @default(now())\n\n  series     Series      @relation(fields: [seriesId], references: [id])\n  characters Character[]\n\n  @@unique([seriesId, seasonNumber])\n}\n\nmodel Character {\n  id                  Int      @id @default(autoincrement())\n  name                String\n  alternativeName     String?\n  seriesId            Int\n  appearsInAllSeasons Boolean  @default(true)\n  createdAt           DateTime @default(now())\n\n  series  Series   @relation(fields: [seriesId], references: [id])\n  seasons Season[]\n  votes   Vote[]\n\n  @@index([name])\n  @@index([alternativeName])\n}\n\nmodel User {\n  id        Int      @id @default(autoincrement())\n  username  String\n  email     String   @unique\n  createdAt DateTime @default(now())\n\n  votes Vote[]\n}\n\nmodel Vote {\n  id          Int      @id @default(autoincrement())\n  characterId Int\n  userId      Int\n  isEvil      Boolean  @default(false)\n  points      Int\n  createdAt   DateTime @default(now())\n\n  character Character @relation(fields: [characterId], references: [id])\n  user      User      @relation(fields: [userId], references: [id])\n\n  @@unique([characterId, userId])\n}\n",
-  "inlineSchemaHash": "75701fe2243c8b7f69e71d5e9c5e63bb4e022848eedb1485bdcc99bec569aa41",
+  "inlineSchema": "// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\n// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?\n// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init\n\ngenerator client {\n  provider     = \"prisma-client\"\n  output       = \"../generated/prisma\"\n  moduleFormat = \"cjs\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nmodel Series {\n  id               Int      @id @default(autoincrement())\n  title            String\n  yearOfProduction Int\n  isLimited        Boolean  @default(false)\n  createdAt        DateTime @default(now())\n\n  seasons    Season[]\n  characters Character[]\n\n  @@index([title])\n}\n\nmodel Season {\n  id               Int      @id @default(autoincrement())\n  seasonNumber     Int\n  alternativeTitle String?\n  seriesId         Int\n  createdAt        DateTime @default(now())\n\n  series     Series      @relation(fields: [seriesId], references: [id])\n  characters Character[]\n\n  @@unique([seriesId, seasonNumber])\n}\n\nmodel Character {\n  id                  Int      @id @default(autoincrement())\n  name                String\n  alternativeName     String?\n  seriesId            Int\n  appearsInAllSeasons Boolean  @default(true)\n  createdAt           DateTime @default(now())\n\n  series  Series   @relation(fields: [seriesId], references: [id])\n  seasons Season[]\n  votes   Vote[]\n\n  @@index([name])\n  @@index([alternativeName])\n}\n\nmodel User {\n  id        Int      @id @default(autoincrement())\n  username  String\n  email     String   @unique\n  createdAt DateTime @default(now())\n\n  votes Vote[]\n}\n\nmodel Vote {\n  id          Int      @id @default(autoincrement())\n  characterId Int\n  userId      Int\n  isEvil      Boolean  @default(false)\n  points      Int\n  createdAt   DateTime @default(now())\n\n  character Character @relation(fields: [characterId], references: [id])\n  user      User      @relation(fields: [userId], references: [id])\n\n  @@unique([characterId, userId])\n}\n",
+  "inlineSchemaHash": "265b654984f9740500ed55a5565f7e0b03cb6a5d344bbd9ca09900afbdeb536a",
   "copyEngine": true,
   "runtimeDataModel": {
     "models": {},
