@@ -855,6 +855,9 @@ export const CharacterScalarFieldEnum = {
   alternativeName: 'alternativeName',
   seriesId: 'seriesId',
   appearsInAllSeasons: 'appearsInAllSeasons',
+  totalVotes: 'totalVotes',
+  evilVotes: 'evilVotes',
+  points: 'points',
   createdAt: 'createdAt'
 } as const
 

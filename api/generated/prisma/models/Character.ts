@@ -28,11 +28,17 @@ export type AggregateCharacter = {
 export type CharacterAvgAggregateOutputType = {
   id: number | null
   seriesId: number | null
+  totalVotes: number | null
+  evilVotes: number | null
+  points: number | null
 }
 
 export type CharacterSumAggregateOutputType = {
   id: number | null
   seriesId: number | null
+  totalVotes: number | null
+  evilVotes: number | null
+  points: number | null
 }
 
 export type CharacterMinAggregateOutputType = {
@@ -41,6 +47,9 @@ export type CharacterMinAggregateOutputType = {
   alternativeName: string | null
   seriesId: number | null
   appearsInAllSeasons: boolean | null
+  totalVotes: number | null
+  evilVotes: number | null
+  points: number | null
   createdAt: Date | null
 }
 
@@ -50,6 +59,9 @@ export type CharacterMaxAggregateOutputType = {
   alternativeName: string | null
   seriesId: number | null
   appearsInAllSeasons: boolean | null
+  totalVotes: number | null
+  evilVotes: number | null
+  points: number | null
   createdAt: Date | null
 }
 
@@ -59,6 +71,9 @@ export type CharacterCountAggregateOutputType = {
   alternativeName: number
   seriesId: number
   appearsInAllSeasons: number
+  totalVotes: number
+  evilVotes: number
+  points: number
   createdAt: number
   _all: number
 }
@@ -67,11 +82,17 @@ export type CharacterCountAggregateOutputType = {
 export type CharacterAvgAggregateInputType = {
   id?: true
   seriesId?: true
+  totalVotes?: true
+  evilVotes?: true
+  points?: true
 }
 
 export type CharacterSumAggregateInputType = {
   id?: true
   seriesId?: true
+  totalVotes?: true
+  evilVotes?: true
+  points?: true
 }
 
 export type CharacterMinAggregateInputType = {
@@ -80,6 +101,9 @@ export type CharacterMinAggregateInputType = {
   alternativeName?: true
   seriesId?: true
   appearsInAllSeasons?: true
+  totalVotes?: true
+  evilVotes?: true
+  points?: true
   createdAt?: true
 }
 
@@ -89,6 +113,9 @@ export type CharacterMaxAggregateInputType = {
   alternativeName?: true
   seriesId?: true
   appearsInAllSeasons?: true
+  totalVotes?: true
+  evilVotes?: true
+  points?: true
   createdAt?: true
 }
 
@@ -98,6 +125,9 @@ export type CharacterCountAggregateInputType = {
   alternativeName?: true
   seriesId?: true
   appearsInAllSeasons?: true
+  totalVotes?: true
+  evilVotes?: true
+  points?: true
   createdAt?: true
   _all?: true
 }
@@ -194,6 +224,9 @@ export type CharacterGroupByOutputType = {
   alternativeName: string | null
   seriesId: number
   appearsInAllSeasons: boolean
+  totalVotes: number
+  evilVotes: number
+  points: number
   createdAt: Date
   _count: CharacterCountAggregateOutputType | null
   _avg: CharacterAvgAggregateOutputType | null
@@ -226,6 +259,9 @@ export type CharacterWhereInput = {
   alternativeName?: Prisma.StringNullableFilter<"Character"> | string | null
   seriesId?: Prisma.IntFilter<"Character"> | number
   appearsInAllSeasons?: Prisma.BoolFilter<"Character"> | boolean
+  totalVotes?: Prisma.IntFilter<"Character"> | number
+  evilVotes?: Prisma.IntFilter<"Character"> | number
+  points?: Prisma.IntFilter<"Character"> | number
   createdAt?: Prisma.DateTimeFilter<"Character"> | Date | string
   series?: Prisma.XOR<Prisma.SeriesScalarRelationFilter, Prisma.SeriesWhereInput>
   seasons?: Prisma.SeasonListRelationFilter
@@ -238,6 +274,9 @@ export type CharacterOrderByWithRelationInput = {
   alternativeName?: Prisma.SortOrderInput | Prisma.SortOrder
   seriesId?: Prisma.SortOrder
   appearsInAllSeasons?: Prisma.SortOrder
+  totalVotes?: Prisma.SortOrder
+  evilVotes?: Prisma.SortOrder
+  points?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   series?: Prisma.SeriesOrderByWithRelationInput
   seasons?: Prisma.SeasonOrderByRelationAggregateInput
@@ -253,6 +292,9 @@ export type CharacterWhereUniqueInput = Prisma.AtLeast<{
   alternativeName?: Prisma.StringNullableFilter<"Character"> | string | null
   seriesId?: Prisma.IntFilter<"Character"> | number
   appearsInAllSeasons?: Prisma.BoolFilter<"Character"> | boolean
+  totalVotes?: Prisma.IntFilter<"Character"> | number
+  evilVotes?: Prisma.IntFilter<"Character"> | number
+  points?: Prisma.IntFilter<"Character"> | number
   createdAt?: Prisma.DateTimeFilter<"Character"> | Date | string
   series?: Prisma.XOR<Prisma.SeriesScalarRelationFilter, Prisma.SeriesWhereInput>
   seasons?: Prisma.SeasonListRelationFilter
@@ -265,6 +307,9 @@ export type CharacterOrderByWithAggregationInput = {
   alternativeName?: Prisma.SortOrderInput | Prisma.SortOrder
   seriesId?: Prisma.SortOrder
   appearsInAllSeasons?: Prisma.SortOrder
+  totalVotes?: Prisma.SortOrder
+  evilVotes?: Prisma.SortOrder
+  points?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   _count?: Prisma.CharacterCountOrderByAggregateInput
   _avg?: Prisma.CharacterAvgOrderByAggregateInput
@@ -282,6 +327,9 @@ export type CharacterScalarWhereWithAggregatesInput = {
   alternativeName?: Prisma.StringNullableWithAggregatesFilter<"Character"> | string | null
   seriesId?: Prisma.IntWithAggregatesFilter<"Character"> | number
   appearsInAllSeasons?: Prisma.BoolWithAggregatesFilter<"Character"> | boolean
+  totalVotes?: Prisma.IntWithAggregatesFilter<"Character"> | number
+  evilVotes?: Prisma.IntWithAggregatesFilter<"Character"> | number
+  points?: Prisma.IntWithAggregatesFilter<"Character"> | number
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Character"> | Date | string
 }
 
@@ -289,6 +337,9 @@ export type CharacterCreateInput = {
   name: string
   alternativeName?: string | null
   appearsInAllSeasons?: boolean
+  totalVotes?: number
+  evilVotes?: number
+  points?: number
   createdAt?: Date | string
   series: Prisma.SeriesCreateNestedOneWithoutCharactersInput
   seasons?: Prisma.SeasonCreateNestedManyWithoutCharactersInput
@@ -301,6 +352,9 @@ export type CharacterUncheckedCreateInput = {
   alternativeName?: string | null
   seriesId: number
   appearsInAllSeasons?: boolean
+  totalVotes?: number
+  evilVotes?: number
+  points?: number
   createdAt?: Date | string
   seasons?: Prisma.SeasonUncheckedCreateNestedManyWithoutCharactersInput
   votes?: Prisma.VoteUncheckedCreateNestedManyWithoutCharacterInput
@@ -310,6 +364,9 @@ export type CharacterUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   alternativeName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   appearsInAllSeasons?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  totalVotes?: Prisma.IntFieldUpdateOperationsInput | number
+  evilVotes?: Prisma.IntFieldUpdateOperationsInput | number
+  points?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   series?: Prisma.SeriesUpdateOneRequiredWithoutCharactersNestedInput
   seasons?: Prisma.SeasonUpdateManyWithoutCharactersNestedInput
@@ -322,6 +379,9 @@ export type CharacterUncheckedUpdateInput = {
   alternativeName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   seriesId?: Prisma.IntFieldUpdateOperationsInput | number
   appearsInAllSeasons?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  totalVotes?: Prisma.IntFieldUpdateOperationsInput | number
+  evilVotes?: Prisma.IntFieldUpdateOperationsInput | number
+  points?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   seasons?: Prisma.SeasonUncheckedUpdateManyWithoutCharactersNestedInput
   votes?: Prisma.VoteUncheckedUpdateManyWithoutCharacterNestedInput
@@ -333,6 +393,9 @@ export type CharacterCreateManyInput = {
   alternativeName?: string | null
   seriesId: number
   appearsInAllSeasons?: boolean
+  totalVotes?: number
+  evilVotes?: number
+  points?: number
   createdAt?: Date | string
 }
 
@@ -340,6 +403,9 @@ export type CharacterUpdateManyMutationInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   alternativeName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   appearsInAllSeasons?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  totalVotes?: Prisma.IntFieldUpdateOperationsInput | number
+  evilVotes?: Prisma.IntFieldUpdateOperationsInput | number
+  points?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -349,6 +415,9 @@ export type CharacterUncheckedUpdateManyInput = {
   alternativeName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   seriesId?: Prisma.IntFieldUpdateOperationsInput | number
   appearsInAllSeasons?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  totalVotes?: Prisma.IntFieldUpdateOperationsInput | number
+  evilVotes?: Prisma.IntFieldUpdateOperationsInput | number
+  points?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -368,12 +437,18 @@ export type CharacterCountOrderByAggregateInput = {
   alternativeName?: Prisma.SortOrder
   seriesId?: Prisma.SortOrder
   appearsInAllSeasons?: Prisma.SortOrder
+  totalVotes?: Prisma.SortOrder
+  evilVotes?: Prisma.SortOrder
+  points?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
 export type CharacterAvgOrderByAggregateInput = {
   id?: Prisma.SortOrder
   seriesId?: Prisma.SortOrder
+  totalVotes?: Prisma.SortOrder
+  evilVotes?: Prisma.SortOrder
+  points?: Prisma.SortOrder
 }
 
 export type CharacterMaxOrderByAggregateInput = {
@@ -382,6 +457,9 @@ export type CharacterMaxOrderByAggregateInput = {
   alternativeName?: Prisma.SortOrder
   seriesId?: Prisma.SortOrder
   appearsInAllSeasons?: Prisma.SortOrder
+  totalVotes?: Prisma.SortOrder
+  evilVotes?: Prisma.SortOrder
+  points?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -391,12 +469,18 @@ export type CharacterMinOrderByAggregateInput = {
   alternativeName?: Prisma.SortOrder
   seriesId?: Prisma.SortOrder
   appearsInAllSeasons?: Prisma.SortOrder
+  totalVotes?: Prisma.SortOrder
+  evilVotes?: Prisma.SortOrder
+  points?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
 export type CharacterSumOrderByAggregateInput = {
   id?: Prisma.SortOrder
   seriesId?: Prisma.SortOrder
+  totalVotes?: Prisma.SortOrder
+  evilVotes?: Prisma.SortOrder
+  points?: Prisma.SortOrder
 }
 
 export type CharacterScalarRelationFilter = {
@@ -502,6 +586,9 @@ export type CharacterCreateWithoutSeriesInput = {
   name: string
   alternativeName?: string | null
   appearsInAllSeasons?: boolean
+  totalVotes?: number
+  evilVotes?: number
+  points?: number
   createdAt?: Date | string
   seasons?: Prisma.SeasonCreateNestedManyWithoutCharactersInput
   votes?: Prisma.VoteCreateNestedManyWithoutCharacterInput
@@ -512,6 +599,9 @@ export type CharacterUncheckedCreateWithoutSeriesInput = {
   name: string
   alternativeName?: string | null
   appearsInAllSeasons?: boolean
+  totalVotes?: number
+  evilVotes?: number
+  points?: number
   createdAt?: Date | string
   seasons?: Prisma.SeasonUncheckedCreateNestedManyWithoutCharactersInput
   votes?: Prisma.VoteUncheckedCreateNestedManyWithoutCharacterInput
@@ -552,6 +642,9 @@ export type CharacterScalarWhereInput = {
   alternativeName?: Prisma.StringNullableFilter<"Character"> | string | null
   seriesId?: Prisma.IntFilter<"Character"> | number
   appearsInAllSeasons?: Prisma.BoolFilter<"Character"> | boolean
+  totalVotes?: Prisma.IntFilter<"Character"> | number
+  evilVotes?: Prisma.IntFilter<"Character"> | number
+  points?: Prisma.IntFilter<"Character"> | number
   createdAt?: Prisma.DateTimeFilter<"Character"> | Date | string
 }
 
@@ -559,6 +652,9 @@ export type CharacterCreateWithoutSeasonsInput = {
   name: string
   alternativeName?: string | null
   appearsInAllSeasons?: boolean
+  totalVotes?: number
+  evilVotes?: number
+  points?: number
   createdAt?: Date | string
   series: Prisma.SeriesCreateNestedOneWithoutCharactersInput
   votes?: Prisma.VoteCreateNestedManyWithoutCharacterInput
@@ -570,6 +666,9 @@ export type CharacterUncheckedCreateWithoutSeasonsInput = {
   alternativeName?: string | null
   seriesId: number
   appearsInAllSeasons?: boolean
+  totalVotes?: number
+  evilVotes?: number
+  points?: number
   createdAt?: Date | string
   votes?: Prisma.VoteUncheckedCreateNestedManyWithoutCharacterInput
 }
@@ -599,6 +698,9 @@ export type CharacterCreateWithoutVotesInput = {
   name: string
   alternativeName?: string | null
   appearsInAllSeasons?: boolean
+  totalVotes?: number
+  evilVotes?: number
+  points?: number
   createdAt?: Date | string
   series: Prisma.SeriesCreateNestedOneWithoutCharactersInput
   seasons?: Prisma.SeasonCreateNestedManyWithoutCharactersInput
@@ -610,6 +712,9 @@ export type CharacterUncheckedCreateWithoutVotesInput = {
   alternativeName?: string | null
   seriesId: number
   appearsInAllSeasons?: boolean
+  totalVotes?: number
+  evilVotes?: number
+  points?: number
   createdAt?: Date | string
   seasons?: Prisma.SeasonUncheckedCreateNestedManyWithoutCharactersInput
 }
@@ -634,6 +739,9 @@ export type CharacterUpdateWithoutVotesInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   alternativeName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   appearsInAllSeasons?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  totalVotes?: Prisma.IntFieldUpdateOperationsInput | number
+  evilVotes?: Prisma.IntFieldUpdateOperationsInput | number
+  points?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   series?: Prisma.SeriesUpdateOneRequiredWithoutCharactersNestedInput
   seasons?: Prisma.SeasonUpdateManyWithoutCharactersNestedInput
@@ -645,6 +753,9 @@ export type CharacterUncheckedUpdateWithoutVotesInput = {
   alternativeName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   seriesId?: Prisma.IntFieldUpdateOperationsInput | number
   appearsInAllSeasons?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  totalVotes?: Prisma.IntFieldUpdateOperationsInput | number
+  evilVotes?: Prisma.IntFieldUpdateOperationsInput | number
+  points?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   seasons?: Prisma.SeasonUncheckedUpdateManyWithoutCharactersNestedInput
 }
@@ -654,6 +765,9 @@ export type CharacterCreateManySeriesInput = {
   name: string
   alternativeName?: string | null
   appearsInAllSeasons?: boolean
+  totalVotes?: number
+  evilVotes?: number
+  points?: number
   createdAt?: Date | string
 }
 
@@ -661,6 +775,9 @@ export type CharacterUpdateWithoutSeriesInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   alternativeName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   appearsInAllSeasons?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  totalVotes?: Prisma.IntFieldUpdateOperationsInput | number
+  evilVotes?: Prisma.IntFieldUpdateOperationsInput | number
+  points?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   seasons?: Prisma.SeasonUpdateManyWithoutCharactersNestedInput
   votes?: Prisma.VoteUpdateManyWithoutCharacterNestedInput
@@ -671,6 +788,9 @@ export type CharacterUncheckedUpdateWithoutSeriesInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   alternativeName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   appearsInAllSeasons?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  totalVotes?: Prisma.IntFieldUpdateOperationsInput | number
+  evilVotes?: Prisma.IntFieldUpdateOperationsInput | number
+  points?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   seasons?: Prisma.SeasonUncheckedUpdateManyWithoutCharactersNestedInput
   votes?: Prisma.VoteUncheckedUpdateManyWithoutCharacterNestedInput
@@ -681,6 +801,9 @@ export type CharacterUncheckedUpdateManyWithoutSeriesInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   alternativeName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   appearsInAllSeasons?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  totalVotes?: Prisma.IntFieldUpdateOperationsInput | number
+  evilVotes?: Prisma.IntFieldUpdateOperationsInput | number
+  points?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -688,6 +811,9 @@ export type CharacterUpdateWithoutSeasonsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   alternativeName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   appearsInAllSeasons?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  totalVotes?: Prisma.IntFieldUpdateOperationsInput | number
+  evilVotes?: Prisma.IntFieldUpdateOperationsInput | number
+  points?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   series?: Prisma.SeriesUpdateOneRequiredWithoutCharactersNestedInput
   votes?: Prisma.VoteUpdateManyWithoutCharacterNestedInput
@@ -699,6 +825,9 @@ export type CharacterUncheckedUpdateWithoutSeasonsInput = {
   alternativeName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   seriesId?: Prisma.IntFieldUpdateOperationsInput | number
   appearsInAllSeasons?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  totalVotes?: Prisma.IntFieldUpdateOperationsInput | number
+  evilVotes?: Prisma.IntFieldUpdateOperationsInput | number
+  points?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   votes?: Prisma.VoteUncheckedUpdateManyWithoutCharacterNestedInput
 }
@@ -709,6 +838,9 @@ export type CharacterUncheckedUpdateManyWithoutSeasonsInput = {
   alternativeName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   seriesId?: Prisma.IntFieldUpdateOperationsInput | number
   appearsInAllSeasons?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  totalVotes?: Prisma.IntFieldUpdateOperationsInput | number
+  evilVotes?: Prisma.IntFieldUpdateOperationsInput | number
+  points?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -758,6 +890,9 @@ export type CharacterSelect<ExtArgs extends runtime.Types.Extensions.InternalArg
   alternativeName?: boolean
   seriesId?: boolean
   appearsInAllSeasons?: boolean
+  totalVotes?: boolean
+  evilVotes?: boolean
+  points?: boolean
   createdAt?: boolean
   series?: boolean | Prisma.SeriesDefaultArgs<ExtArgs>
   seasons?: boolean | Prisma.Character$seasonsArgs<ExtArgs>
@@ -771,6 +906,9 @@ export type CharacterSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ext
   alternativeName?: boolean
   seriesId?: boolean
   appearsInAllSeasons?: boolean
+  totalVotes?: boolean
+  evilVotes?: boolean
+  points?: boolean
   createdAt?: boolean
   series?: boolean | Prisma.SeriesDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["character"]>
@@ -781,6 +919,9 @@ export type CharacterSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ext
   alternativeName?: boolean
   seriesId?: boolean
   appearsInAllSeasons?: boolean
+  totalVotes?: boolean
+  evilVotes?: boolean
+  points?: boolean
   createdAt?: boolean
   series?: boolean | Prisma.SeriesDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["character"]>
@@ -791,10 +932,13 @@ export type CharacterSelectScalar = {
   alternativeName?: boolean
   seriesId?: boolean
   appearsInAllSeasons?: boolean
+  totalVotes?: boolean
+  evilVotes?: boolean
+  points?: boolean
   createdAt?: boolean
 }
 
-export type CharacterOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "alternativeName" | "seriesId" | "appearsInAllSeasons" | "createdAt", ExtArgs["result"]["character"]>
+export type CharacterOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "alternativeName" | "seriesId" | "appearsInAllSeasons" | "totalVotes" | "evilVotes" | "points" | "createdAt", ExtArgs["result"]["character"]>
 export type CharacterInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   series?: boolean | Prisma.SeriesDefaultArgs<ExtArgs>
   seasons?: boolean | Prisma.Character$seasonsArgs<ExtArgs>
@@ -821,6 +965,9 @@ export type $CharacterPayload<ExtArgs extends runtime.Types.Extensions.InternalA
     alternativeName: string | null
     seriesId: number
     appearsInAllSeasons: boolean
+    totalVotes: number
+    evilVotes: number
+    points: number
     createdAt: Date
   }, ExtArgs["result"]["character"]>
   composites: {}
@@ -1253,6 +1400,9 @@ export interface CharacterFieldRefs {
   readonly alternativeName: Prisma.FieldRef<"Character", 'String'>
   readonly seriesId: Prisma.FieldRef<"Character", 'Int'>
   readonly appearsInAllSeasons: Prisma.FieldRef<"Character", 'Boolean'>
+  readonly totalVotes: Prisma.FieldRef<"Character", 'Int'>
+  readonly evilVotes: Prisma.FieldRef<"Character", 'Int'>
+  readonly points: Prisma.FieldRef<"Character", 'Int'>
   readonly createdAt: Prisma.FieldRef<"Character", 'DateTime'>
 }
     

@@ -47,6 +47,9 @@ model Character {
   alternativeName       String?
   seriesId              Int
   appearsInAllSeasons   Boolean   @default(true)
+  totalVotes            Int       @default(0)
+  evilVotes             Int       @default(0)
+  points                Int       @default(0)
   createdAt             DateTime  @default(now())
 
   series Series @relation(fields: [seriesId], references: [id])
