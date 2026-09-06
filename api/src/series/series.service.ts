@@ -7,7 +7,9 @@ export class SeriesService {
   constructor(private readonly prismaService: PrismaService) {}
 
   getSeries() {
-    return this.prismaService.series.findMany();
+    return this.prismaService.series.findMany({
+      take: 10,
+    });
   }
 
   async getSeriesById(id: number) {
