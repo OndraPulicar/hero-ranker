@@ -9,6 +9,14 @@ import { CreateVoteDto } from './dto/create-vote.dto';
 import { GetVotesDto } from './dto/get-votes.dto';
 import { UpdateVoteDto } from './dto/update-vote.dto';
 
+type CurrentVote = Prisma.VoteGetPayload<{
+  select: {
+    characterId: true;
+    isEvil: true;
+    points: true;
+  };
+}>;
+
 @Injectable()
 export class VotesService {
   constructor(private readonly prismaService: PrismaService) {}
@@ -82,18 +90,7 @@ export class VotesService {
   async updateVote(id: number, updateVoteDto: UpdateVoteDto) {
     try {
       return await this.prismaService.$transaction(async (tx) => {
-        const currentVote = await tx.vote.findUnique({
-          where: { id },
-          select: {
-            isEvil: true,
-            points: true,
-            characterId: true,
-          },
-        });
-
-        if (!currentVote) {
-          throw new NotFoundException(`Vote with id ${id} not found`);
-        }
+        const currentVote = await this.getCurrentVoteOrThrowError(tx, id);
 
         const nextIsEvil = updateVoteDto.isEvil ?? currentVote.isEvil;
         const nextPoints = updateVoteDto.points ?? currentVote.points;
@@ -139,18 +136,7 @@ export class VotesService {
   async deleteVote(id: number) {
     try {
       return await this.prismaService.$transaction(async (tx) => {
-        const currentVote = await tx.vote.findUnique({
-          where: { id },
-          select: {
-            characterId: true,
-            isEvil: true,
-            points: true,
-          },
-        });
-
-        if (!currentVote) {
-          throw new NotFoundException(`Vote with id ${id} not found`);
-        }
+        const currentVote = await this.getCurrentVoteOrThrowError(tx, id);
 
         await tx.character.update({
           where: { id: currentVote.characterId },
@@ -174,5 +160,25 @@ export class VotesService {
 
       throw error;
     }
+  }
+
+  private async getCurrentVoteOrThrowError(
+    tx: Prisma.TransactionClient,
+    id: number,
+  ): Promise<CurrentVote> {
+    const currentVote = await tx.vote.findUnique({
+      where: { id },
+      select: {
+        characterId: true,
+        isEvil: true,
+        points: true,
+      },
+    });
+
+    if (!currentVote) {
+      throw new NotFoundException(`Vote with id ${id} not found`);
+    }
+
+    return currentVote;
   }
 }
