@@ -5,11 +5,13 @@ import {
   Get,
   Param,
   ParseIntPipe,
+  Patch,
   Post,
   Query,
 } from '@nestjs/common';
 import { CreateVoteDto } from './dto/create-vote.dto';
 import { GetVotesDto } from './dto/get-votes.dto';
+import { UpdateVoteDto } from './dto/update-vote.dto';
 import { VotesService } from './votes.service';
 
 @Controller('votes')
@@ -29,6 +31,14 @@ export class VotesController {
   @Get(':id')
   getVoteById(@Param('id', ParseIntPipe) id: number) {
     return this.votesService.getVoteById(id);
+  }
+
+  @Patch(':id')
+  updateVote(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateVoteDto: UpdateVoteDto,
+  ) {
+    return this.votesService.updateVote(id, updateVoteDto);
   }
 
   @Delete(':id')

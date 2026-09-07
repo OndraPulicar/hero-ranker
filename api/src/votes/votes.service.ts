@@ -7,6 +7,7 @@ import { Prisma } from 'src/../generated/prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateVoteDto } from './dto/create-vote.dto';
 import { GetVotesDto } from './dto/get-votes.dto';
+import { UpdateVoteDto } from './dto/update-vote.dto';
 
 @Injectable()
 export class VotesService {
@@ -55,6 +56,31 @@ export class VotesService {
     }
 
     return vote;
+  }
+
+  async updateVote(id: number, updateVoteDto: UpdateVoteDto) {
+    try {
+      return await this.prismaService.vote.update({
+        where: { id },
+        data: {
+          ...(updateVoteDto.isEvil !== undefined && {
+            isEvil: updateVoteDto.isEvil,
+          }),
+          ...(updateVoteDto.points !== undefined && {
+            points: updateVoteDto.points,
+          }),
+        },
+      });
+    } catch (error) {
+      if (
+        error instanceof Prisma.PrismaClientKnownRequestError &&
+        error.code === 'P2025'
+      ) {
+        throw new NotFoundException(`Vote with id ${id} not found`);
+      }
+
+      throw error;
+    }
   }
 
   async deleteVote(id: number) {
