@@ -1,8 +1,4 @@
-import {
-  ConflictException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Prisma } from 'src/../generated/prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateVoteDto } from './dto/create-vote.dto';
@@ -22,46 +18,32 @@ export class VotesService {
   constructor(private readonly prismaService: PrismaService) {}
 
   async createVote(createVoteDto: CreateVoteDto) {
-    try {
-      await this.prismaService.$transaction(async (tx) => {
-        await tx.vote.create({
-          data: createVoteDto,
-        });
+    return this.prismaService.$transaction(async (tx) => {
+      const createdVote = await tx.vote.create({
+        data: createVoteDto,
+      });
 
-        await tx.character.update({
-          where: {
-            id: createVoteDto.characterId,
+      await tx.character.update({
+        where: {
+          id: createVoteDto.characterId,
+        },
+        data: {
+          totalVotes: {
+            increment: 1,
           },
-          data: {
-            totalVotes: {
+          ...(createVoteDto.isEvil && {
+            evilVotes: {
               increment: 1,
             },
-            ...(createVoteDto.isEvil && {
-              evilVotes: {
-                increment: 1,
-              },
-            }),
-            points: {
-              increment: createVoteDto.points,
-            },
+          }),
+          points: {
+            increment: createVoteDto.points,
           },
-        });
+        },
       });
-    } catch (error) {
-      if (error instanceof Prisma.PrismaClientKnownRequestError) {
-        if (error.code === 'P2002') {
-          throw new ConflictException(
-            'This user has already voted for this character',
-          );
-        }
 
-        if (error.code === 'P2003') {
-          throw new NotFoundException('Character or user not found');
-        }
-      }
-
-      throw error;
-    }
+      return createdVote;
+    });
   }
 
   getVotes(query: GetVotesDto) {
@@ -88,78 +70,57 @@ export class VotesService {
   }
 
   async updateVote(id: number, updateVoteDto: UpdateVoteDto) {
-    try {
-      return await this.prismaService.$transaction(async (tx) => {
-        const currentVote = await this.getCurrentVoteOrThrowError(tx, id);
+    return this.prismaService.$transaction(async (tx) => {
+      const currentVote = await this.getCurrentVoteOrThrowError(tx, id);
 
-        const nextIsEvil = updateVoteDto.isEvil ?? currentVote.isEvil;
-        const nextPoints = updateVoteDto.points ?? currentVote.points;
-        const evilVotesDelta = Number(nextIsEvil) - Number(currentVote.isEvil);
-        const pointsDelta = nextPoints - currentVote.points;
+      const nextIsEvil = updateVoteDto.isEvil ?? currentVote.isEvil;
+      const nextPoints = updateVoteDto.points ?? currentVote.points;
+      const evilVotesDelta = Number(nextIsEvil) - Number(currentVote.isEvil);
+      const pointsDelta = nextPoints - currentVote.points;
 
-        const updatedVote = await tx.vote.update({
-          where: { id },
-          data: {
-            isEvil: nextIsEvil,
-            points: nextPoints,
-          },
-        });
-
-        if (evilVotesDelta !== 0 || pointsDelta !== 0) {
-          await tx.character.update({
-            where: { id: currentVote.characterId },
-            data: {
-              ...(evilVotesDelta !== 0 && {
-                evilVotes: { increment: evilVotesDelta },
-              }),
-              ...(pointsDelta !== 0 && {
-                points: { increment: pointsDelta },
-              }),
-            },
-          });
-        }
-
-        return updatedVote;
+      const updatedVote = await tx.vote.update({
+        where: { id },
+        data: {
+          isEvil: nextIsEvil,
+          points: nextPoints,
+        },
       });
-    } catch (error) {
-      if (
-        error instanceof Prisma.PrismaClientKnownRequestError &&
-        error.code === 'P2025'
-      ) {
-        throw new NotFoundException(`Vote with id ${id} not found`);
-      }
 
-      throw error;
-    }
-  }
-
-  async deleteVote(id: number) {
-    try {
-      return await this.prismaService.$transaction(async (tx) => {
-        const currentVote = await this.getCurrentVoteOrThrowError(tx, id);
-
+      if (evilVotesDelta !== 0 || pointsDelta !== 0) {
         await tx.character.update({
           where: { id: currentVote.characterId },
           data: {
-            totalVotes: { decrement: 1 },
-            ...(currentVote.isEvil && {
-              evilVotes: { decrement: 1 },
+            ...(evilVotesDelta !== 0 && {
+              evilVotes: { increment: evilVotesDelta },
             }),
-            points: { decrement: currentVote.points },
+            ...(pointsDelta !== 0 && {
+              points: { increment: pointsDelta },
+            }),
           },
         });
-
-        return tx.vote.delete({ where: { id } });
-      });
-    } catch (error) {
-      if (error instanceof Prisma.PrismaClientKnownRequestError) {
-        if (error.code === 'P2025') {
-          throw new NotFoundException(`Vote with id ${id} not found`);
-        }
       }
 
-      throw error;
-    }
+      return updatedVote;
+    });
+  }
+
+  async deleteVote(id: number) {
+    return this.prismaService.$transaction(async (tx) => {
+      const currentVote = await this.getCurrentVoteOrThrowError(tx, id);
+
+      await tx.character.update({
+        where: { id: currentVote.characterId },
+        data: {
+          totalVotes: { decrement: 1 },
+          ...(currentVote.isEvil && {
+            evilVotes: { decrement: 1 },
+          }),
+          points: { decrement: currentVote.points },
+        },
+      });
+
+      return tx.vote.delete({ where: { id } });
+    });
   }
 
   private async getCurrentVoteOrThrowError(
