@@ -16,6 +16,10 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
+    "test:e2e:db:up": "docker compose -f ../docker-compose.test.yml up -d --wait db-test",
+    "test:e2e:db:reset": "docker compose -f ../docker-compose.test.yml down -v && npm run test:e2e:db:up && cross-env DATABASE_URL=postgresql://app:password@localhost:5433/hero_ranker_test npx prisma migrate deploy && cross-env DATABASE_URL=postgresql://app:password@localhost:5433/hero_ranker_test tsx prisma/seed.e2e.ts",
+    "test:e2e:db:seed": "cross-env DATABASE_URL=postgresql://app:password@localhost:5433/hero_ranker_test npx prisma migrate deploy && cross-env DATABASE_URL=postgresql://app:password@localhost:5433/hero_ranker_test tsx prisma/seed.e2e.ts",
+    "test:e2e:run": "cross-env DATABASE_URL=postgresql://app:password@localhost:5433/hero_ranker_test npm run test:e2e -- --runInBand",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
@@ -39,6 +43,7 @@
     "@types/jest": "^30.0.0",
     "@types/node": "^24.13.3",
     "@types/supertest": "^7.0.0",
+    "cross-env": "^10.1.0",
     "dotenv": "^17.4.2",
     "eslint": "^9.18.0",
     "eslint-config-prettier": "^10.0.1",
@@ -53,6 +58,7 @@
     "ts-loader": "^9.5.2",
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
+    "tsx": "^4.23.13",
     "typescript": "^5.7.3",
     "typescript-eslint": "^8.20.0"
   },
