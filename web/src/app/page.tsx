@@ -2,7 +2,16 @@ import SeriesCard from "./components/Card";
 import Card from "./components/Card";
 import CharacterCard from "./components/CharacterCard";
 
-const seriesList = [
+type Resources = "series" | "characters";
+
+type ResourceItem = {
+  id: number;
+  resource: Resources;
+  title: string;
+  imageUrl: string;
+};
+
+const seriesList: ResourceItem[] = [
   { id: 1, resource: "series", title: "Breaking Bad", imageUrl: "breaking-bad.jpg" },
   { id: 2, resource: "series", title: "Game of Thrones", imageUrl: "game-of-thrones.jpg" },
   { id: 3, resource: "series", title: "Stranger Things", imageUrl: "stranger-things.jpg" },
@@ -10,7 +19,7 @@ const seriesList = [
   { id: 5, resource: "series", title: "The Mandalorian", imageUrl: "the-mandalorian.jpg" },
 ];
 
-const characterList = [
+const characterList: ResourceItem[] = [
   { id: 1, resource: "characters", title: "Walter White", imageUrl: "walter-white.jpg" },
   { id: 2, resource: "characters", title: "Jesse Pinkman", imageUrl: "jesse-pinkman.jpg" },
   { id: 3, resource: "characters", title: "Daenerys Targaryen", imageUrl: "daenerys-targaryen.jpg" },
