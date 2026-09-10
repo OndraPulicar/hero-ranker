@@ -15,7 +15,7 @@ const characterList = [
   { id: 2, resource: "characters", title: "Jesse Pinkman", imageUrl: "jesse-pinkman.jpg" },
   { id: 3, resource: "characters", title: "Daenerys Targaryen", imageUrl: "daenerys-targaryen.jpg" },
   { id: 4, resource: "characters", title: "Jon Snow", imageUrl: "jon-snow.jpg" },
-  { id: 5, resource: "characters", title: "Dexter Morgan", imageUrl: "dexter-morgan.jpg" },
+  { id: 5, resource: "characters", title: "Dexter Morgan", imageUrl: "dexter-morgan-2.jpg" },
 ];
 
 export default function Home() {
