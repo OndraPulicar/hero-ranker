@@ -1,13 +1,13 @@
 import Image from "next/image";
 import Link from "next/link";
 
-export default function Card({ data }: { data: { id: number; title: string; imageUrl: string; slug: string } }) {
+export default function Card({ data }: { data: { id: number; title: string; imageUrl: string; resource: string } }) {
   return (
-    <Link href={`/${data.slug}/${data.id}`}>
+    <Link href={`/${data.resource}/${data.id}`}>
       <div className="text-text dark:text-background bg-muted rounded-lg shadow-md flex flex-col items-center gap-2">
         <Image
           className="rounded-t-lg w-full h-65 object-cover"
-          src={`/images/${data.slug}/${data.imageUrl}`}
+          src={`/images/${data.resource}/${data.imageUrl}`}
           alt={data.title}
           width={150}
           height={150}

@@ -3,19 +3,19 @@ import Card from "./components/Card";
 import CharacterCard from "./components/CharacterCard";
 
 const seriesList = [
-  { id: 1, slug: "series", title: "Breaking Bad", imageUrl: "breaking-bad.jpg" },
-  { id: 2, slug: "series", title: "Game of Thrones", imageUrl: "game-of-thrones.jpg" },
-  { id: 3, slug: "series", title: "Stranger Things", imageUrl: "stranger-things.jpg" },
-  { id: 4, slug: "series", title: "Dexter", imageUrl: "dexter.jpg" },
-  { id: 5, slug: "series", title: "The Mandalorian", imageUrl: "the-mandalorian.jpg" },
+  { id: 1, resource: "series", title: "Breaking Bad", imageUrl: "breaking-bad.jpg" },
+  { id: 2, resource: "series", title: "Game of Thrones", imageUrl: "game-of-thrones.jpg" },
+  { id: 3, resource: "series", title: "Stranger Things", imageUrl: "stranger-things.jpg" },
+  { id: 4, resource: "series", title: "Dexter", imageUrl: "dexter.jpg" },
+  { id: 5, resource: "series", title: "The Mandalorian", imageUrl: "the-mandalorian.jpg" },
 ];
 
 const characterList = [
-  { id: 1, slug: "characters", title: "Walter White", imageUrl: "walter-white.jpg" },
-  { id: 2, slug: "characters", title: "Jesse Pinkman", imageUrl: "jesse-pinkman.jpg" },
-  { id: 3, slug: "characters", title: "Daenerys Targaryen", imageUrl: "daenerys-targaryen.jpg" },
-  { id: 4, slug: "characters", title: "Jon Snow", imageUrl: "jon-snow.jpg" },
-  { id: 5, slug: "characters", title: "Dexter Morgan", imageUrl: "dexter-morgan.jpg" },
+  { id: 1, resource: "characters", title: "Walter White", imageUrl: "walter-white.jpg" },
+  { id: 2, resource: "characters", title: "Jesse Pinkman", imageUrl: "jesse-pinkman.jpg" },
+  { id: 3, resource: "characters", title: "Daenerys Targaryen", imageUrl: "daenerys-targaryen.jpg" },
+  { id: 4, resource: "characters", title: "Jon Snow", imageUrl: "jon-snow.jpg" },
+  { id: 5, resource: "characters", title: "Dexter Morgan", imageUrl: "dexter-morgan.jpg" },
 ];
 
 export default function Home() {
