@@ -19,7 +19,7 @@ export default async function Series({ params }: { params: Promise<{ id: string 
           width={150}
           height={150}
         />
-        <div className="max-w-xl text-justify">A chemistry teacher diagnosed with inoperable lung cancer turns to manufacturing and selling methamphetamine with a former student to secure his family's future.</div>
+        <div className="max-w-xl text-justify">A chemistry teacher diagnosed with inoperable lung cancer turns to manufacturing and selling methamphetamine with a former student to secure his family&apos;s future.</div>
       </section>
       <section>
         <h3 className="text-lg font-bold mb-2">
