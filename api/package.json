@@ -21,7 +21,8 @@
     "test:e2e:db:seed": "cross-env DATABASE_URL=postgresql://app:password@localhost:5433/hero_ranker_test npx prisma migrate deploy && cross-env DATABASE_URL=postgresql://app:password@localhost:5433/hero_ranker_test tsx prisma/seed.e2e.ts",
     "test:e2e:run": "cross-env DATABASE_URL=postgresql://app:password@localhost:5433/hero_ranker_test npm run test:e2e -- --runInBand",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json"
+    "test:e2e": "jest --config ./test/jest-e2e.json",
+    "db:migrate": "prisma migrate dev"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",
