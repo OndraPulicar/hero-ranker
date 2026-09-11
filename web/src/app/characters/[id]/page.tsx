@@ -1,7 +1,9 @@
 import Image from 'next/image';
 import { PencilSparkles } from 'lucide-react';
 
-export default function Character() {
+export default async function Character({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  console.log("character id:", id);
   return (
     <div className="mx-auto w-full max-w-3xl bg-[#0d1017] p-4 text-white font-sans md:p-6">
       <div className="flex flex-col gap-6 md:flex-row md:items-stretch">
