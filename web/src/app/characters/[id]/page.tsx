@@ -3,14 +3,19 @@ import { PencilSparkles } from 'lucide-react';
 
 export default async function Character({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  console.log("character id:", id);
+  
+  const response = await fetch(`http://localhost:3001/characters/${id}`);
+  const character = await response.json();
+  console.log(character);
+ 
+
   return (
     <div className="mx-auto w-full max-w-3xl bg-[#0d1017] p-4 text-white font-sans md:p-6">
       <div className="flex flex-col gap-6 md:flex-row md:items-stretch">
         <div className="relative aspect-[4/3] w-full shrink-0 overflow-hidden rounded-2xl md:w-72 md:aspect-[4/5]">
           <Image
             src="/images/characters/walter-white.jpg"
-            alt="Walter White"
+            alt={character.name}
             fill
             className="object-cover"
             priority
@@ -26,7 +31,7 @@ export default async function Character({ params }: { params: Promise<{ id: stri
               Character Rating
             </span>
             <h2 className="text-2xl font-black leading-tight text-white md:text-3xl">
-              Walter White
+              {character.name}
             </h2>
           </div>
         </div>
@@ -38,16 +43,20 @@ export default async function Character({ params }: { params: Promise<{ id: stri
                 Audience Score
               </h3>
               <p className="mt-1 text-base font-medium text-gray-300">
-                Exceptional standing
+                {character.totalVotes === 0 ? "Nobody has voted yet, be the first!" : "Exceptional standing"}
               </p>
             </div>
 
             <div className="flex items-baseline rounded-2xl bg-[#facc15] px-4 py-3 text-black">
               <span className="text-3xl font-black md:text-4xl">
-                97.5
+                {
+                  character.points === 0
+                  ? "N/A"
+                  : character.points / character.totalVotes / 3 * 10
+                }
               </span>
               <span className="ml-1 text-xs font-bold opacity-75">
-                /100
+                { character.points !== 0 ? "/10" : "" }
               </span>
             </div>
           </div>
@@ -56,10 +65,16 @@ export default async function Character({ params }: { params: Promise<{ id: stri
             <div className="relative mb-1 mt-6">
               <div 
                 className="absolute bottom-full mb-1 flex -translate-x-1/2 flex-col items-center"
-                style={{ left: '87%' }}
+                style={{ left: character.evilVotes > 0 
+                  ? (character.evilVotes / character.totalVotes * 100) + "%"
+                  : (character.totalVotes > 0) ? "0%" : "50%" 
+                }}
               >
                 <span className="text-[11px] font-semibold text-gray-400">
-                  87%
+                  {character.evilVotes > 0 
+                    ? (character.evilVotes / character.totalVotes * 100).toFixed(1) + "%" 
+                    : (character.totalVotes > 0) ? "0%" : "N/A"
+                  }
                 </span>
                 <span className="text-xs text-gray-400 leading-none">▼</span>
               </div>

@@ -3,19 +3,22 @@ import Image from "next/image";
 
 export default async function Series({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  console.log("series id:", id);
+
+  const response = await fetch(`http://localhost:3001/series/${id}`);
+  const series = await response.json();
+
   return (
     <div className="flex flex-col gap-4 w-full mx-auto max-w-7xl px-6 py-10">
       <section className="">
-        <h1 className="text-2xl font-bold mb-2">Breaking Bad </h1>
+        <h1 className="text-2xl font-bold mb-2">{series.title}</h1>
         <h2 className="text-lg font-bold mb-2">
-          2006
+          {series.yearOfProduction}
         </h2>
       </section>
       <section className="flex flex-row gap-4">
         <Image
           src={`/images/series/breaking-bad.jpg`}
-          alt="Breaking Bad"
+          alt="{series.title}"
           width={150}
           height={150}
         />
@@ -25,19 +28,20 @@ export default async function Series({ params }: { params: Promise<{ id: string 
         <h3 className="text-lg font-bold mb-2">
           Seasons
         </h3>
-        <span className="pr-4">Season 1</span>
-        <span className="pr-4">Season 2</span>
-        <span className="pr-4">Season 3</span>
-        <span className="pr-4">Season 4</span>
-        <span className="pr-4">Season 5</span>
+        {series.seasons.map((season: { id: number; title: string; seasonNumber: number; alternativeTitle: string }) => (
+          <span key={season.id} className="pr-4">
+            {season.alternativeTitle || `Season ${season.seasonNumber}`}
+          </span>
+        ))}
       </section>
       <section>
         <h3 className="text-lg font-bold mb-2">
           Characters
         </h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-          <Card data={{ id: 1, resource: "characters", title: "Walter White", imageUrl: "walter-white.jpg" }} />
-          <Card data={{ id: 2, resource: "characters", title: "Jesse Pinkman", imageUrl: "jesse-pinkman.jpg" }} />
+          {series.characters.map((character: { id: number; name: string; }) => (
+            <Card key={character.id} data={{ id: character.id, resource: "characters", title: character.name, imageUrl: "jesse-pinkman.jpg" }} />
+          ))}
         </div>
       </section>
     </div>
