@@ -1,10 +1,11 @@
 import Card from "@/app/components/Card";
+import { API_URL } from "@/config";
 import Image from "next/image";
 
 export default async function Series({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
 
-  const response = await fetch(`http://localhost:3001/series/${id}`);
+  const response = await fetch(`${API_URL}/series/${id}`);
   const series = await response.json();
 
   return (

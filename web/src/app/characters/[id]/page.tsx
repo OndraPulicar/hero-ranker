@@ -1,10 +1,11 @@
 import Image from 'next/image';
 import { PencilSparkles } from 'lucide-react';
+import { API_URL } from '@/config';
 
 export default async function Character({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   
-  const response = await fetch(`http://localhost:3001/characters/${id}`);
+  const response = await fetch(`${API_URL}/characters/${id}`);
   const character = await response.json();
   console.log(character);
  
