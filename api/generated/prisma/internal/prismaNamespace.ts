@@ -832,6 +832,7 @@ export const SeriesScalarFieldEnum = {
   title: 'title',
   yearOfProduction: 'yearOfProduction',
   isLimited: 'isLimited',
+  imageKey: 'imageKey',
   createdAt: 'createdAt'
 } as const
 

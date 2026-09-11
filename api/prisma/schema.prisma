@@ -20,6 +20,7 @@ model Series {
   title               String
   yearOfProduction    Int
   isLimited           Boolean   @default(false)
+  imageKey            String?
   createdAt           DateTime  @default(now())
 
   seasons             Season[]

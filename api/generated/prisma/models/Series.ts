@@ -40,6 +40,7 @@ export type SeriesMinAggregateOutputType = {
   title: string | null
   yearOfProduction: number | null
   isLimited: boolean | null
+  imageKey: string | null
   createdAt: Date | null
 }
 
@@ -48,6 +49,7 @@ export type SeriesMaxAggregateOutputType = {
   title: string | null
   yearOfProduction: number | null
   isLimited: boolean | null
+  imageKey: string | null
   createdAt: Date | null
 }
 
@@ -56,6 +58,7 @@ export type SeriesCountAggregateOutputType = {
   title: number
   yearOfProduction: number
   isLimited: number
+  imageKey: number
   createdAt: number
   _all: number
 }
@@ -76,6 +79,7 @@ export type SeriesMinAggregateInputType = {
   title?: true
   yearOfProduction?: true
   isLimited?: true
+  imageKey?: true
   createdAt?: true
 }
 
@@ -84,6 +88,7 @@ export type SeriesMaxAggregateInputType = {
   title?: true
   yearOfProduction?: true
   isLimited?: true
+  imageKey?: true
   createdAt?: true
 }
 
@@ -92,6 +97,7 @@ export type SeriesCountAggregateInputType = {
   title?: true
   yearOfProduction?: true
   isLimited?: true
+  imageKey?: true
   createdAt?: true
   _all?: true
 }
@@ -187,6 +193,7 @@ export type SeriesGroupByOutputType = {
   title: string
   yearOfProduction: number
   isLimited: boolean
+  imageKey: string | null
   createdAt: Date
   _count: SeriesCountAggregateOutputType | null
   _avg: SeriesAvgAggregateOutputType | null
@@ -218,6 +225,7 @@ export type SeriesWhereInput = {
   title?: Prisma.StringFilter<"Series"> | string
   yearOfProduction?: Prisma.IntFilter<"Series"> | number
   isLimited?: Prisma.BoolFilter<"Series"> | boolean
+  imageKey?: Prisma.StringNullableFilter<"Series"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Series"> | Date | string
   seasons?: Prisma.SeasonListRelationFilter
   characters?: Prisma.CharacterListRelationFilter
@@ -228,6 +236,7 @@ export type SeriesOrderByWithRelationInput = {
   title?: Prisma.SortOrder
   yearOfProduction?: Prisma.SortOrder
   isLimited?: Prisma.SortOrder
+  imageKey?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   seasons?: Prisma.SeasonOrderByRelationAggregateInput
   characters?: Prisma.CharacterOrderByRelationAggregateInput
@@ -241,6 +250,7 @@ export type SeriesWhereUniqueInput = Prisma.AtLeast<{
   title?: Prisma.StringFilter<"Series"> | string
   yearOfProduction?: Prisma.IntFilter<"Series"> | number
   isLimited?: Prisma.BoolFilter<"Series"> | boolean
+  imageKey?: Prisma.StringNullableFilter<"Series"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Series"> | Date | string
   seasons?: Prisma.SeasonListRelationFilter
   characters?: Prisma.CharacterListRelationFilter
@@ -251,6 +261,7 @@ export type SeriesOrderByWithAggregationInput = {
   title?: Prisma.SortOrder
   yearOfProduction?: Prisma.SortOrder
   isLimited?: Prisma.SortOrder
+  imageKey?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   _count?: Prisma.SeriesCountOrderByAggregateInput
   _avg?: Prisma.SeriesAvgOrderByAggregateInput
@@ -267,6 +278,7 @@ export type SeriesScalarWhereWithAggregatesInput = {
   title?: Prisma.StringWithAggregatesFilter<"Series"> | string
   yearOfProduction?: Prisma.IntWithAggregatesFilter<"Series"> | number
   isLimited?: Prisma.BoolWithAggregatesFilter<"Series"> | boolean
+  imageKey?: Prisma.StringNullableWithAggregatesFilter<"Series"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Series"> | Date | string
 }
 
@@ -274,6 +286,7 @@ export type SeriesCreateInput = {
   title: string
   yearOfProduction: number
   isLimited?: boolean
+  imageKey?: string | null
   createdAt?: Date | string
   seasons?: Prisma.SeasonCreateNestedManyWithoutSeriesInput
   characters?: Prisma.CharacterCreateNestedManyWithoutSeriesInput
@@ -284,6 +297,7 @@ export type SeriesUncheckedCreateInput = {
   title: string
   yearOfProduction: number
   isLimited?: boolean
+  imageKey?: string | null
   createdAt?: Date | string
   seasons?: Prisma.SeasonUncheckedCreateNestedManyWithoutSeriesInput
   characters?: Prisma.CharacterUncheckedCreateNestedManyWithoutSeriesInput
@@ -293,6 +307,7 @@ export type SeriesUpdateInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   yearOfProduction?: Prisma.IntFieldUpdateOperationsInput | number
   isLimited?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  imageKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   seasons?: Prisma.SeasonUpdateManyWithoutSeriesNestedInput
   characters?: Prisma.CharacterUpdateManyWithoutSeriesNestedInput
@@ -303,6 +318,7 @@ export type SeriesUncheckedUpdateInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   yearOfProduction?: Prisma.IntFieldUpdateOperationsInput | number
   isLimited?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  imageKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   seasons?: Prisma.SeasonUncheckedUpdateManyWithoutSeriesNestedInput
   characters?: Prisma.CharacterUncheckedUpdateManyWithoutSeriesNestedInput
@@ -313,6 +329,7 @@ export type SeriesCreateManyInput = {
   title: string
   yearOfProduction: number
   isLimited?: boolean
+  imageKey?: string | null
   createdAt?: Date | string
 }
 
@@ -320,6 +337,7 @@ export type SeriesUpdateManyMutationInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   yearOfProduction?: Prisma.IntFieldUpdateOperationsInput | number
   isLimited?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  imageKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -328,6 +346,7 @@ export type SeriesUncheckedUpdateManyInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   yearOfProduction?: Prisma.IntFieldUpdateOperationsInput | number
   isLimited?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  imageKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -336,6 +355,7 @@ export type SeriesCountOrderByAggregateInput = {
   title?: Prisma.SortOrder
   yearOfProduction?: Prisma.SortOrder
   isLimited?: Prisma.SortOrder
+  imageKey?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -349,6 +369,7 @@ export type SeriesMaxOrderByAggregateInput = {
   title?: Prisma.SortOrder
   yearOfProduction?: Prisma.SortOrder
   isLimited?: Prisma.SortOrder
+  imageKey?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -357,6 +378,7 @@ export type SeriesMinOrderByAggregateInput = {
   title?: Prisma.SortOrder
   yearOfProduction?: Prisma.SortOrder
   isLimited?: Prisma.SortOrder
+  imageKey?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -384,6 +406,10 @@ export type IntFieldUpdateOperationsInput = {
 
 export type BoolFieldUpdateOperationsInput = {
   set?: boolean
+}
+
+export type NullableStringFieldUpdateOperationsInput = {
+  set?: string | null
 }
 
 export type DateTimeFieldUpdateOperationsInput = {
@@ -422,6 +448,7 @@ export type SeriesCreateWithoutSeasonsInput = {
   title: string
   yearOfProduction: number
   isLimited?: boolean
+  imageKey?: string | null
   createdAt?: Date | string
   characters?: Prisma.CharacterCreateNestedManyWithoutSeriesInput
 }
@@ -431,6 +458,7 @@ export type SeriesUncheckedCreateWithoutSeasonsInput = {
   title: string
   yearOfProduction: number
   isLimited?: boolean
+  imageKey?: string | null
   createdAt?: Date | string
   characters?: Prisma.CharacterUncheckedCreateNestedManyWithoutSeriesInput
 }
@@ -455,6 +483,7 @@ export type SeriesUpdateWithoutSeasonsInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   yearOfProduction?: Prisma.IntFieldUpdateOperationsInput | number
   isLimited?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  imageKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   characters?: Prisma.CharacterUpdateManyWithoutSeriesNestedInput
 }
@@ -464,6 +493,7 @@ export type SeriesUncheckedUpdateWithoutSeasonsInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   yearOfProduction?: Prisma.IntFieldUpdateOperationsInput | number
   isLimited?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  imageKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   characters?: Prisma.CharacterUncheckedUpdateManyWithoutSeriesNestedInput
 }
@@ -472,6 +502,7 @@ export type SeriesCreateWithoutCharactersInput = {
   title: string
   yearOfProduction: number
   isLimited?: boolean
+  imageKey?: string | null
   createdAt?: Date | string
   seasons?: Prisma.SeasonCreateNestedManyWithoutSeriesInput
 }
@@ -481,6 +512,7 @@ export type SeriesUncheckedCreateWithoutCharactersInput = {
   title: string
   yearOfProduction: number
   isLimited?: boolean
+  imageKey?: string | null
   createdAt?: Date | string
   seasons?: Prisma.SeasonUncheckedCreateNestedManyWithoutSeriesInput
 }
@@ -505,6 +537,7 @@ export type SeriesUpdateWithoutCharactersInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   yearOfProduction?: Prisma.IntFieldUpdateOperationsInput | number
   isLimited?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  imageKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   seasons?: Prisma.SeasonUpdateManyWithoutSeriesNestedInput
 }
@@ -514,6 +547,7 @@ export type SeriesUncheckedUpdateWithoutCharactersInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   yearOfProduction?: Prisma.IntFieldUpdateOperationsInput | number
   isLimited?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  imageKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   seasons?: Prisma.SeasonUncheckedUpdateManyWithoutSeriesNestedInput
 }
@@ -563,6 +597,7 @@ export type SeriesSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   title?: boolean
   yearOfProduction?: boolean
   isLimited?: boolean
+  imageKey?: boolean
   createdAt?: boolean
   seasons?: boolean | Prisma.Series$seasonsArgs<ExtArgs>
   characters?: boolean | Prisma.Series$charactersArgs<ExtArgs>
@@ -574,6 +609,7 @@ export type SeriesSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extens
   title?: boolean
   yearOfProduction?: boolean
   isLimited?: boolean
+  imageKey?: boolean
   createdAt?: boolean
 }, ExtArgs["result"]["series"]>
 
@@ -582,6 +618,7 @@ export type SeriesSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extens
   title?: boolean
   yearOfProduction?: boolean
   isLimited?: boolean
+  imageKey?: boolean
   createdAt?: boolean
 }, ExtArgs["result"]["series"]>
 
@@ -590,10 +627,11 @@ export type SeriesSelectScalar = {
   title?: boolean
   yearOfProduction?: boolean
   isLimited?: boolean
+  imageKey?: boolean
   createdAt?: boolean
 }
 
-export type SeriesOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "yearOfProduction" | "isLimited" | "createdAt", ExtArgs["result"]["series"]>
+export type SeriesOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "yearOfProduction" | "isLimited" | "imageKey" | "createdAt", ExtArgs["result"]["series"]>
 export type SeriesInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   seasons?: boolean | Prisma.Series$seasonsArgs<ExtArgs>
   characters?: boolean | Prisma.Series$charactersArgs<ExtArgs>
@@ -613,6 +651,7 @@ export type $SeriesPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     title: string
     yearOfProduction: number
     isLimited: boolean
+    imageKey: string | null
     createdAt: Date
   }, ExtArgs["result"]["series"]>
   composites: {}
@@ -1043,6 +1082,7 @@ export interface SeriesFieldRefs {
   readonly title: Prisma.FieldRef<"Series", 'String'>
   readonly yearOfProduction: Prisma.FieldRef<"Series", 'Int'>
   readonly isLimited: Prisma.FieldRef<"Series", 'Boolean'>
+  readonly imageKey: Prisma.FieldRef<"Series", 'String'>
   readonly createdAt: Prisma.FieldRef<"Series", 'DateTime'>
 }
     
