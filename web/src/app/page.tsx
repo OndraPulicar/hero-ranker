@@ -1,6 +1,4 @@
-import SeriesCard from "./components/Card";
 import Card from "./components/Card";
-import CharacterCard from "./components/CharacterCard";
 
 type Resources = "series" | "characters";
 
