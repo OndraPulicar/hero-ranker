@@ -51,6 +51,7 @@ model Character {
   totalVotes            Int       @default(0)
   evilVotes             Int       @default(0)
   points                Int       @default(0)
+  imageKey              String?
   createdAt             DateTime  @default(now())
 
   series Series @relation(fields: [seriesId], references: [id])
