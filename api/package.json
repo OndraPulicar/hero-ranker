@@ -22,7 +22,8 @@
     "test:e2e:run": "cross-env DATABASE_URL=postgresql://app:password@localhost:5433/hero_ranker_test npm run test:e2e -- --runInBand",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "db:migrate": "prisma migrate dev"
+    "db:migrate": "prisma migrate dev",
+    "postinstall": "prisma generate"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1130.0",
