@@ -1,6 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { GetCharactersDto } from './dto/get-characters.dto';
+import { UpdateCharactersDto } from './dto/update-character.dto';
+import { Prisma } from 'generated/prisma/client';
 
 @Injectable()
 export class CharactersService {
@@ -33,5 +35,27 @@ export class CharactersService {
     }
 
     return character;
+  }
+
+  async updateCharacter(id: number, dto: UpdateCharactersDto) {
+    const data: Prisma.CharacterUpdateInput = {
+      name: dto.name,
+      alternativeName: dto.alternativeName,
+      appearsInAllSeasons: dto.appearsInAllSeasons,
+      imageKey: dto.imageKey,
+    };
+
+    if (dto.seasons !== undefined) {
+      data.seasons = {
+        set: dto.seasons.map((seasonId) => ({
+          id: seasonId,
+        })),
+      };
+    }
+
+    return this.prismaService.character.update({
+      where: { id },
+      data,
+    });
   }
 }

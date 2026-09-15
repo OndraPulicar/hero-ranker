@@ -2,17 +2,18 @@ import {
   Controller,
   BadRequestException,
   Get,
-  Post,
   Param,
   ParseIntPipe,
   Query,
   UseInterceptors,
   UploadedFile,
+  Put,
 } from '@nestjs/common';
 import { GetCharactersDto } from './dto/get-characters.dto';
 import { CharactersService } from './characters.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { StorageService } from 'src/storage/storage.service';
+import { randomUUID } from 'crypto';
 
 @Controller('characters')
 export class CharactersController {
@@ -31,18 +32,24 @@ export class CharactersController {
     return this.charactersService.getCharacterById(id);
   }
 
-  @Post('image')
+  @Put(':id/image')
   @UseInterceptors(FileInterceptor('image'))
-  async uploadImage(@UploadedFile() file?: Express.Multer.File) {
+  async uploadImage(
+    @Param('id', ParseIntPipe) id: number,
+    @UploadedFile() file?: Express.Multer.File,
+  ) {
+    await this.charactersService.getCharacterById(id);
+
     if (!file) {
       throw new BadRequestException('Image file is required');
     }
 
-    await this.storageService.upload(
-      file.buffer,
-      'characters/test/walter-white.jpg',
-      file.mimetype,
-    );
+    const imageId = randomUUID();
+    const imageKey = `characters/${id}/${imageId}.jpg`;
+
+    await this.storageService.upload(file.buffer, imageKey, file.mimetype);
+
+    await this.charactersService.updateCharacter(id, { imageKey });
 
     return { message: 'Character image uploaded successfully' };
   }
