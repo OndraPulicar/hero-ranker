@@ -3,10 +3,16 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { GetCharactersDto } from './dto/get-characters.dto';
 import { UpdateCharactersDto } from './dto/update-character.dto';
 import { Prisma } from 'generated/prisma/client';
+import { CreateCharacterDto } from './dto/create-character.dto';
+import { StorageService } from 'src/storage/storage.service';
+import { randomUUID } from 'crypto';
 
 @Injectable()
 export class CharactersService {
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(
+    private readonly prismaService: PrismaService,
+    private readonly storageService: StorageService,
+  ) {}
 
   getCharacters(query: GetCharactersDto) {
     return this.prismaService.character.findMany({
@@ -37,6 +43,27 @@ export class CharactersService {
     return character;
   }
 
+  async createCharacter(dto: CreateCharacterDto, file?: Express.Multer.File) {
+    const data: Prisma.CharacterCreateInput = {
+      name: dto.name,
+      alternativeName: dto.alternativeName,
+      appearsInAllSeasons: dto.appearsInAllSeasons,
+      series: { connect: { id: dto.seriesId } },
+      seasons: { connect: dto.seasons?.map((id) => ({ id })) },
+    };
+
+    const character = await this.prismaService.character.create({ data });
+
+    if (file) {
+      const imageKey = this.createImageKey(character.id);
+
+      await this.storageService.upload(file.buffer, imageKey, file.mimetype);
+      return this.updateCharacter(character.id, { imageKey: imageKey });
+    }
+
+    return character;
+  }
+
   async updateCharacter(id: number, dto: UpdateCharactersDto) {
     const data: Prisma.CharacterUpdateInput = {
       name: dto.name,
@@ -57,5 +84,10 @@ export class CharactersService {
       where: { id },
       data,
     });
+  }
+
+  private createImageKey(id: number) {
+    const imageId = randomUUID();
+    return `characters/${id}/${imageId}.jpg`;
   }
 }
