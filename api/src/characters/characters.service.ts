@@ -57,11 +57,15 @@ export class CharactersService {
     if (file) {
       const imageKey = this.createImageKey(character.id);
 
-      await this.storageService.upload(file.buffer, imageKey, file.mimetype);
-      return this.prismaService.character.update({
-        where: { id: character.id },
-        data: { imageKey },
-      });
+      try {
+        await this.storageService.upload(file.buffer, imageKey, file.mimetype);
+        return this.prismaService.character.update({
+          where: { id: character.id },
+          data: { imageKey },
+        });
+      } catch (error) {
+        this.logger.error(`Failed to upload image for the character`, error);
+      }
     }
 
     return character;
