@@ -5,7 +5,6 @@ import { UpdateCharacterDto } from './dto/update-character.dto';
 import { Prisma } from 'generated/prisma/client';
 import { CreateCharacterDto } from './dto/create-character.dto';
 import { StorageService } from 'src/storage/storage.service';
-import { randomUUID } from 'crypto';
 
 @Injectable()
 export class CharactersService {
@@ -55,7 +54,10 @@ export class CharactersService {
     const character = await this.prismaService.character.create({ data });
 
     if (file) {
-      const imageKey = this.createImageKey(character.id);
+      const imageKey = this.storageService.createImageKey(
+        character.id,
+        'characters',
+      );
 
       try {
         await this.storageService.upload(file.buffer, imageKey, file.mimetype);
@@ -102,16 +104,11 @@ export class CharactersService {
     return character;
   }
 
-  private createImageKey(id: number) {
-    const imageId = randomUUID();
-    return `characters/${id}/${imageId}.jpg`;
-  }
-
   private async uploadCharacterImageAndUpdate(
     id: number,
     file: Express.Multer.File,
   ) {
-    const imageKey = this.createImageKey(id);
+    const imageKey = this.storageService.createImageKey(id, 'characters');
 
     try {
       await this.storageService.upload(file.buffer, imageKey, file.mimetype);

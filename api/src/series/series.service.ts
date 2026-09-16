@@ -3,7 +3,6 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { GetCharactersBySeriesIdDto } from './dto/get-characters-by-series-id.dto';
 import { CreateSeriesDto } from './dto/create-series.dto';
 import { Prisma } from 'generated/prisma/client';
-import { randomUUID } from 'crypto';
 import { StorageService } from 'src/storage/storage.service';
 
 @Injectable()
@@ -86,16 +85,11 @@ export class SeriesService {
     return series;
   }
 
-  private createImageKey(id: number) {
-    const imageId = randomUUID();
-    return `series/${id}/${imageId}.jpg`;
-  }
-
   private async uploadSeriesImageAndUpdate(
     id: number,
     file: Express.Multer.File,
   ) {
-    const imageKey = this.createImageKey(id);
+    const imageKey = this.storageService.createImageKey(id, 'series');
 
     try {
       await this.storageService.upload(file.buffer, imageKey, file.mimetype);

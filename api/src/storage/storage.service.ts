@@ -1,5 +1,7 @@
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 import { Injectable } from '@nestjs/common';
+import { UploadImgResource } from './storage.types';
+import { randomUUID } from 'crypto';
 
 @Injectable()
 export class StorageService {
@@ -30,5 +32,10 @@ export class StorageService {
         ContentType: contentType,
       }),
     );
+  }
+
+  createImageKey(id: number, resource: UploadImgResource) {
+    const imageId = randomUUID();
+    return `${resource}/${id}/${imageId}.jpg`;
   }
 }
