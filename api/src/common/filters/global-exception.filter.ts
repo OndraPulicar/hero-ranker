@@ -4,6 +4,7 @@ import {
   ExceptionFilter,
   HttpException,
   HttpStatus,
+  Logger,
 } from '@nestjs/common';
 import { Response } from 'express';
 import { Prisma } from 'src/../generated/prisma/client';
@@ -11,11 +12,15 @@ import { Prisma } from 'src/../generated/prisma/client';
 @Catch()
 export class GlobalExceptionFilter implements ExceptionFilter {
   catch(exception: unknown, host: ArgumentsHost) {
+    this.logger.error(`EXCEPTION: ${JSON.stringify(exception)}`);
+
     const response = host.switchToHttp().getResponse<Response>();
 
     if (exception instanceof HttpException) {
       const status = exception.getStatus();
       const exceptionResponse = exception.getResponse();
+
+      this.logger.error(`RESPONSE: ${JSON.stringify(exceptionResponse)}`);
 
       response
         .status(status)
@@ -66,4 +71,6 @@ export class GlobalExceptionFilter implements ExceptionFilter {
         };
     }
   }
+
+  private readonly logger = new Logger(GlobalExceptionFilter.name);
 }
