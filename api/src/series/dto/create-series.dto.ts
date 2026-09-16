@@ -21,6 +21,7 @@ export class CreateSeriesDto {
   @IsBoolean()
   isLimited!: boolean;
 
+  @Transform(({ value }) => JSON.parse(value as string) as unknown[])
   @IsOptional()
   @IsArray()
   @ValidateNested({ each: true })
