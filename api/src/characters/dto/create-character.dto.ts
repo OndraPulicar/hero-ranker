@@ -6,6 +6,7 @@ import {
   IsString,
 } from 'class-validator';
 
+// TODO: remove imageKey from the class
 export class CreateCharacterDto {
   @IsString()
   name!: string;

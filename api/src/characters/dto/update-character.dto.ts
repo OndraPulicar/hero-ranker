@@ -1,5 +1,7 @@
 import { IsArray, IsBoolean, IsOptional, IsString } from 'class-validator';
 
+// TODO: rename to UpdateCharacterDto
+// TODO: remove imageKey from the class
 export class UpdateCharactersDto {
   @IsOptional()
   @IsString()

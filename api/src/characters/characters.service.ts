@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, Logger } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { GetCharactersDto } from './dto/get-characters.dto';
 import { UpdateCharactersDto } from './dto/update-character.dto';
@@ -58,13 +58,20 @@ export class CharactersService {
       const imageKey = this.createImageKey(character.id);
 
       await this.storageService.upload(file.buffer, imageKey, file.mimetype);
-      return this.updateCharacter(character.id, { imageKey: imageKey });
+      return this.prismaService.character.update({
+        where: { id: character.id },
+        data: { imageKey },
+      });
     }
 
     return character;
   }
 
-  async updateCharacter(id: number, dto: UpdateCharactersDto) {
+  async updateCharacter(
+    id: number,
+    dto: UpdateCharactersDto,
+    file?: Express.Multer.File,
+  ) {
     const data: Prisma.CharacterUpdateInput = {
       name: dto.name,
       alternativeName: dto.alternativeName,
@@ -80,14 +87,32 @@ export class CharactersService {
       };
     }
 
-    return this.prismaService.character.update({
+    const character = await this.prismaService.character.update({
       where: { id },
       data,
     });
+
+    if (file) {
+      const imageKey = this.createImageKey(id);
+
+      try {
+        await this.storageService.upload(file.buffer, imageKey, file.mimetype);
+        return this.prismaService.character.update({
+          where: { id },
+          data: { imageKey },
+        });
+      } catch (error) {
+        this.logger.error(`Failed to upload image for character ${id}`, error);
+      }
+    }
+
+    return character;
   }
 
   private createImageKey(id: number) {
     const imageId = randomUUID();
     return `characters/${id}/${imageId}.jpg`;
   }
+
+  private readonly logger = new Logger(CharactersService.name);
 }
