@@ -14,6 +14,7 @@ import { GetCharactersBySeriesIdDto } from './dto/get-characters-by-series-id.dt
 import { SeriesService } from './series.service';
 import { CreateSeriesDto } from './dto/create-series.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { UpdateSeriesDto } from './dto/update-series.dto';
 
 @Controller('series')
 export class SeriesController {
@@ -50,7 +51,7 @@ export class SeriesController {
   @UseInterceptors(FileInterceptor('image'))
   updateSeries(
     @Param('id', ParseIntPipe) id: number,
-    @Body() dto: CreateSeriesDto,
+    @Body() dto: UpdateSeriesDto,
     @UploadedFile() file?: Express.Multer.File,
   ) {
     return this.seriesService.updateSeries(id, dto, file);
