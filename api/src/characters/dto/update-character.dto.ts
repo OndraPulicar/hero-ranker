@@ -1,36 +1,6 @@
-import {
-  IsArray,
-  IsBoolean,
-  IsInt,
-  IsOptional,
-  IsString,
-} from 'class-validator';
-import { Transform } from 'class-transformer';
+import { OmitType, PartialType } from '@nestjs/mapped-types';
+import { CreateCharacterDto } from './create-character.dto';
 
-export class UpdateCharacterDto {
-  @IsOptional()
-  @IsString()
-  name?: string;
-
-  @IsOptional()
-  @IsString()
-  alternativeName?: string;
-
-  @Transform(({ value }) => value === 'true')
-  @IsOptional()
-  @IsBoolean()
-  appearsInAllSeasons?: boolean;
-
-  // IDs of seasons where the character appears
-  @Transform(({ value }) => {
-    if (typeof value !== 'string') {
-      throw new Error('Expected string');
-    }
-
-    return JSON.parse(value) as number[];
-  })
-  @IsOptional()
-  @IsArray()
-  @IsInt({ each: true })
-  seasons?: number[];
-}
+export class UpdateSeriesDto extends PartialType(
+  OmitType(CreateCharacterDto, ['seriesId'] as const),
+) {}
