@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException, Logger } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { GetCharactersDto } from './dto/get-characters.dto';
-import { UpdateCharactersDto } from './dto/update-character.dto';
+import { UpdateCharacterDto } from './dto/update-character.dto';
 import { Prisma } from 'generated/prisma/client';
 import { CreateCharacterDto } from './dto/create-character.dto';
 import { StorageService } from 'src/storage/storage.service';
@@ -73,14 +73,13 @@ export class CharactersService {
 
   async updateCharacter(
     id: number,
-    dto: UpdateCharactersDto,
+    dto: UpdateCharacterDto,
     file?: Express.Multer.File,
   ) {
     const data: Prisma.CharacterUpdateInput = {
       name: dto.name,
       alternativeName: dto.alternativeName,
       appearsInAllSeasons: dto.appearsInAllSeasons,
-      imageKey: dto.imageKey,
     };
 
     if (dto.seasons !== undefined) {

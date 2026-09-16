@@ -14,7 +14,7 @@ import { GetCharactersDto } from './dto/get-characters.dto';
 import { CharactersService } from './characters.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { CreateCharacterDto } from './dto/create-character.dto';
-import { UpdateCharactersDto } from './dto/update-character.dto';
+import { UpdateCharacterDto } from './dto/update-character.dto';
 
 @Controller('characters')
 export class CharactersController {
@@ -43,7 +43,7 @@ export class CharactersController {
   @UseInterceptors(FileInterceptor('image'))
   updateCharacter(
     @Param('id', ParseIntPipe) id: number,
-    @Body() dto: UpdateCharactersDto,
+    @Body() dto: UpdateCharacterDto,
     @UploadedFile() file?: Express.Multer.File,
   ) {
     return this.charactersService.updateCharacter(id, dto, file);

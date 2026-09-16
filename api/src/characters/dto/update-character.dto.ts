@@ -1,7 +1,6 @@
 import { IsArray, IsBoolean, IsOptional, IsString } from 'class-validator';
 
-// TODO: rename to UpdateCharacterDto
-export class UpdateCharactersDto {
+export class UpdateCharacterDto {
   @IsOptional()
   @IsString()
   name?: string;
