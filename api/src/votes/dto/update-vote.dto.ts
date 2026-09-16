@@ -1,16 +1,6 @@
-import { Type } from 'class-transformer';
-import { IsBoolean, IsInt, IsOptional, Max, Min } from 'class-validator';
+import { OmitType, PartialType } from '@nestjs/mapped-types';
+import { CreateVoteDto } from './create-vote.dto';
 
-export class UpdateVoteDto {
-  @IsOptional()
-  @Type(() => Boolean)
-  @IsBoolean()
-  isEvil?: boolean;
-
-  @IsOptional()
-  @Type(() => Number)
-  @IsInt()
-  @Min(1)
-  @Max(3)
-  points?: number;
-}
+export class UpdateVoteDto extends PartialType(
+  OmitType(CreateVoteDto, ['userId', 'characterId'] as const),
+) {}
