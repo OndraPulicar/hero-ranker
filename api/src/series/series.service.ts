@@ -4,6 +4,7 @@ import { GetCharactersBySeriesIdDto } from './dto/get-characters-by-series-id.dt
 import { CreateSeriesDto } from './dto/create-series.dto';
 import { Prisma } from 'generated/prisma/client';
 import { StorageService } from 'src/storage/storage.service';
+import { UpdateSeriesDto } from './dto/update-series.dto';
 
 @Injectable()
 export class SeriesService {
@@ -80,6 +81,23 @@ export class SeriesService {
 
     if (file) {
       return this.uploadSeriesImageAndUpdate(series.id, file);
+    }
+
+    return series;
+  }
+
+  async updateSeries(
+    id: number,
+    dto: UpdateSeriesDto,
+    file?: Express.Multer.File,
+  ) {
+    const series = await this.prismaService.series.update({
+      where: { id },
+      data: dto,
+    });
+
+    if (file) {
+      return this.uploadSeriesImageAndUpdate(id, file);
     }
 
     return series;
