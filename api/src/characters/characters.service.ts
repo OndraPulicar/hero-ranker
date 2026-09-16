@@ -96,17 +96,7 @@ export class CharactersService {
     });
 
     if (file) {
-      const imageKey = this.createImageKey(id);
-
-      try {
-        await this.storageService.upload(file.buffer, imageKey, file.mimetype);
-        return this.prismaService.character.update({
-          where: { id },
-          data: { imageKey },
-        });
-      } catch (error) {
-        this.logger.error(`Failed to upload image for character ${id}`, error);
-      }
+      await this.uploadCharacterImageAndUpdate(id, file);
     }
 
     return character;
@@ -115,6 +105,23 @@ export class CharactersService {
   private createImageKey(id: number) {
     const imageId = randomUUID();
     return `characters/${id}/${imageId}.jpg`;
+  }
+
+  private async uploadCharacterImageAndUpdate(
+    id: number,
+    file: Express.Multer.File,
+  ) {
+    const imageKey = this.createImageKey(id);
+
+    try {
+      await this.storageService.upload(file.buffer, imageKey, file.mimetype);
+      return this.prismaService.character.update({
+        where: { id },
+        data: { imageKey },
+      });
+    } catch (error) {
+      this.logger.error(`Failed to upload image for character ${id}`, error);
+    }
   }
 
   private readonly logger = new Logger(CharactersService.name);
