@@ -1,6 +1,18 @@
-import { Controller, Get, Param, ParseIntPipe, Query } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Param,
+  ParseIntPipe,
+  Query,
+  Post,
+  Body,
+  UseInterceptors,
+  UploadedFile,
+} from '@nestjs/common';
 import { GetCharactersBySeriesIdDto } from './dto/get-characters-by-series-id.dto';
 import { SeriesService } from './series.service';
+import { CreateSeriesDto } from './dto/create-series.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('series')
 export class SeriesController {
@@ -22,5 +34,14 @@ export class SeriesController {
     @Query() query: GetCharactersBySeriesIdDto,
   ) {
     return this.seriesService.getCharactersBySeriesId(id, query);
+  }
+
+  @Post()
+  @UseInterceptors(FileInterceptor('image'))
+  createSeries(
+    @Body() dto: CreateSeriesDto,
+    @UploadedFile() file?: Express.Multer.File,
+  ) {
+    return this.seriesService.createSeries(dto, file);
   }
 }

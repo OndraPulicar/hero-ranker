@@ -1,10 +1,17 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, Logger } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { GetCharactersBySeriesIdDto } from './dto/get-characters-by-series-id.dto';
+import { CreateSeriesDto } from './dto/create-series.dto';
+import { Prisma } from 'generated/prisma/client';
+import { randomUUID } from 'crypto';
+import { StorageService } from 'src/storage/storage.service';
 
 @Injectable()
 export class SeriesService {
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(
+    private readonly prismaService: PrismaService,
+    private readonly storageService: StorageService,
+  ) {}
 
   getSeries() {
     return this.prismaService.series.findMany({
@@ -56,4 +63,50 @@ export class SeriesService {
       take: query.limit,
     });
   }
+
+  async createSeries(dto: CreateSeriesDto, file?: Express.Multer.File) {
+    const data: Prisma.SeriesCreateInput = {
+      title: dto.title,
+      yearOfProduction: dto.yearOfProduction,
+      isLimited: dto.isLimited,
+    };
+
+    if (dto.seasons !== undefined) {
+      data.seasons = {
+        create: dto.seasons,
+      };
+    }
+
+    const series = await this.prismaService.series.create({ data });
+
+    if (file) {
+      return this.uploadSeriesImageAndUpdate(series.id, file);
+    }
+
+    return series;
+  }
+
+  private createImageKey(id: number) {
+    const imageId = randomUUID();
+    return `series/${id}/${imageId}.jpg`;
+  }
+
+  private async uploadSeriesImageAndUpdate(
+    id: number,
+    file: Express.Multer.File,
+  ) {
+    const imageKey = this.createImageKey(id);
+
+    try {
+      await this.storageService.upload(file.buffer, imageKey, file.mimetype);
+      return this.prismaService.series.update({
+        where: { id },
+        data: { imageKey },
+      });
+    } catch (error) {
+      this.logger.error(`Failed to upload image for series ${id}`, error);
+    }
+  }
+
+  private readonly logger = new Logger(SeriesService.name);
 }
