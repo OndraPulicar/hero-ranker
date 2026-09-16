@@ -1,6 +1,6 @@
 import { OmitType, PartialType } from '@nestjs/mapped-types';
 import { CreateCharacterDto } from './create-character.dto';
 
-export class UpdateSeriesDto extends PartialType(
+export class UpdateCharacterDto extends PartialType(
   OmitType(CreateCharacterDto, ['seriesId'] as const),
 ) {}
