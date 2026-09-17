@@ -121,5 +121,9 @@ export class CharactersService {
     }
   }
 
+  async deleteCharacter(id: number) {
+    return this.prismaService.character.delete({ where: { id } });
+  }
+
   private readonly logger = new Logger(CharactersService.name);
 }

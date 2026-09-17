@@ -9,6 +9,7 @@ import {
   Body,
   Post,
   Patch,
+  Delete,
 } from '@nestjs/common';
 import { GetCharactersDto } from './dto/get-characters.dto';
 import { CharactersService } from './characters.service';
@@ -47,5 +48,10 @@ export class CharactersController {
     @UploadedFile() file?: Express.Multer.File,
   ) {
     return this.charactersService.updateCharacter(id, dto, file);
+  }
+
+  @Delete(':id')
+  deleteCharacter(@Param('id', ParseIntPipe) id: number) {
+    return this.charactersService.deleteCharacter(id);
   }
 }
