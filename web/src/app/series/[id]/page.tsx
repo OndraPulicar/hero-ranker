@@ -41,8 +41,8 @@ export default async function Series({ params }: { params: Promise<{ id: string 
           Characters
         </h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-          {series.characters.map((character: { id: number; name: string; imageKey: string | null; }) => (
-            <Card key={character.id} data={{ id: character.id, resource: "characters", title: character.name, imageUrl: getImageUrl(character.imageKey) }} />
+          {series.characters.map((character: { id: number; name: string; imageKey: string | null; totalVotes: number; }) => (
+            <Card key={character.id} data={{ id: character.id, resource: "characters", title: character.name, imageUrl: getImageUrl(character.imageKey), totalVotes: character.totalVotes }} />
           ))}
         </div>
       </section>

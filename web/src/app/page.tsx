@@ -33,7 +33,8 @@ export default async function Home() {
                 id: series.id,
                 title: series.title,
                 imageUrl: getImageUrl(series.imageKey),
-                resource: "series"
+                resource: "series",
+                totalVotes: series.totalVotes
               }} />
             ))}
           </div>
@@ -46,7 +47,8 @@ export default async function Home() {
                 id: character.id,
                 title: character.name,
                 imageUrl: getImageUrl(character.imageKey),
-                resource: "characters"
+                resource: "characters",
+                totalVotes: character.totalVotes
               }} />
             ))}
           </div>

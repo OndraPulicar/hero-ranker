@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 
-export default function Card({ data }: { data: { id: number; title: string; imageUrl: string | null; resource: "series" | "characters" } }) {
+export default function Card({ data }: { data: { id: number; title: string; imageUrl: string | null; resource: "series" | "characters"; totalVotes: number; } }) {
 
   // add fallback 
   return (
@@ -16,7 +16,8 @@ export default function Card({ data }: { data: { id: number; title: string; imag
           width={150}
           height={150}
         />
-        <span className="pb-4 pt-2">{data.title}</span>
+        <span className="pt-2 font-bold">{data.title}</span>
+        <span className="pb-4">{data.totalVotes} {data.totalVotes === 1 ? `vote` : `votes`}</span>
     </Link>
   );
 }
