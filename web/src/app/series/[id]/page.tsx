@@ -1,4 +1,5 @@
 import Card from "@/app/components/Card";
+import { getImageUrl } from "@/common";
 import { API_URL } from "@/config";
 import Image from "next/image";
 
@@ -18,7 +19,7 @@ export default async function Series({ params }: { params: Promise<{ id: string 
       </section>
       <section className="flex flex-row gap-4">
         <Image
-          src={`/images/series/breaking-bad.jpg`}
+          src={getImageUrl(series.imageKey)}
           alt="{series.title}"
           width={150}
           height={150}
@@ -31,7 +32,7 @@ export default async function Series({ params }: { params: Promise<{ id: string 
         </h3>
         {series.seasons.map((season: { id: number; title: string; seasonNumber: number; alternativeTitle: string }) => (
           <span key={season.id} className="pr-4">
-            {season.alternativeTitle || `Season ${season.seasonNumber}`}
+            {season.alternativeTitle ?? `Season ${season.seasonNumber}`}
           </span>
         ))}
       </section>
@@ -40,8 +41,8 @@ export default async function Series({ params }: { params: Promise<{ id: string 
           Characters
         </h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-          {series.characters.map((character: { id: number; name: string; }) => (
-            <Card key={character.id} data={{ id: character.id, resource: "characters", title: character.name, imageUrl: "jesse-pinkman.jpg" }} />
+          {series.characters.map((character: { id: number; name: string; imageKey: string | null; }) => (
+            <Card key={character.id} data={{ id: character.id, resource: "characters", title: character.name, imageUrl: getImageUrl(character.imageKey) }} />
           ))}
         </div>
       </section>
