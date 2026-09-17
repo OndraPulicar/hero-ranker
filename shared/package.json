@@ -2,6 +2,9 @@
   "name": "@hero-ranker/shared",
   "version": "1.0.0",
   "private": true,
+  "exports": {
+    "./schemas/*": "./schemas/*.ts"
+  },
   "dependencies": {
     "zod": "^4.6.5"
   }
