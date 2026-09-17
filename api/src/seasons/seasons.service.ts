@@ -1,7 +1,9 @@
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateSeasonDto } from './dto/create-season.dto';
 import { UpdateSeasonDto } from './dto/update-season.dto';
+import { Injectable } from '@nestjs/common';
 
+@Injectable()
 export class SeasonsService {
   constructor(private readonly prismaService: PrismaService) {}
 
