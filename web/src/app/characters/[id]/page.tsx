@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import { PencilSparkles } from 'lucide-react';
 import { API_URL } from '@/config';
+import { getImageUrl } from '@/common';
 
 export default async function Character({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -15,7 +16,7 @@ export default async function Character({ params }: { params: Promise<{ id: stri
       <div className="flex flex-col gap-6 md:flex-row md:items-stretch">
         <div className="relative aspect-[4/3] w-full shrink-0 overflow-hidden rounded-2xl md:w-72 md:aspect-[4/5]">
           <Image
-            src="/images/characters/walter-white.jpg"
+            src={getImageUrl(character.imageKey)}
             alt={character.name}
             fill
             className="object-cover"
@@ -53,7 +54,7 @@ export default async function Character({ params }: { params: Promise<{ id: stri
                 {
                   character.points === 0
                   ? "N/A"
-                  : character.points / character.totalVotes / 3 * 10
+                  : Math.round(character.points / character.totalVotes / 3 * 10)
                 }
               </span>
               <span className="ml-1 text-xs font-bold opacity-75">
@@ -71,12 +72,6 @@ export default async function Character({ params }: { params: Promise<{ id: stri
                   : (character.totalVotes > 0) ? "0%" : "50%" 
                 }}
               >
-                <span className="text-[11px] font-semibold text-gray-400">
-                  {character.evilVotes > 0 
-                    ? (character.evilVotes / character.totalVotes * 100).toFixed(1) + "%" 
-                    : (character.totalVotes > 0) ? "0%" : "N/A"
-                  }
-                </span>
                 <span className="text-xs text-gray-400 leading-none">▼</span>
               </div>
 
