@@ -7,7 +7,7 @@ import {
   IsString,
   ValidateNested,
 } from 'class-validator';
-import { CreateSeasonDto } from 'src/seasons/create-season.dto';
+import { CreateSeasonDto } from 'src/seasons/dto/create-season.dto';
 
 export class CreateSeriesDto {
   @IsString()

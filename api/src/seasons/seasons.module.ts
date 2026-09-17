@@ -1,0 +1,11 @@
+import { Module } from '@nestjs/common';
+import { PrismaModule } from 'src/prisma/prisma.module';
+import { SeasonsService } from './seasons.service';
+import { SeasonsController } from './seasons.controller';
+
+@Module({
+  imports: [PrismaModule],
+  controllers: [SeasonsController],
+  providers: [SeasonsService],
+})
+export class CharactersModule {}
