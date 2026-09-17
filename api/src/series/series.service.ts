@@ -120,5 +120,9 @@ export class SeriesService {
     }
   }
 
+  async deleteSeries(id: number) {
+    return this.prismaService.series.delete({ where: { id } });
+  }
+
   private readonly logger = new Logger(SeriesService.name);
 }

@@ -9,6 +9,7 @@ import {
   UseInterceptors,
   UploadedFile,
   Patch,
+  Delete,
 } from '@nestjs/common';
 import { GetCharactersBySeriesIdDto } from './dto/get-characters-by-series-id.dto';
 import { SeriesService } from './series.service';
@@ -55,5 +56,10 @@ export class SeriesController {
     @UploadedFile() file?: Express.Multer.File,
   ) {
     return this.seriesService.updateSeries(id, dto, file);
+  }
+
+  @Delete(':id')
+  deleteSeries(@Param('id', ParseIntPipe) id: number) {
+    return this.seriesService.deleteSeries(id);
   }
 }
