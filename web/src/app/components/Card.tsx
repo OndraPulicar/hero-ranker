@@ -3,7 +3,7 @@ import Link from "next/link";
 
 export default function Card({ data }: { data: { id: number; title: string; imageUrl: string | null; resource: "series" | "characters" } }) {
 
-          // add fallback 
+  // add fallback 
   return (
     <Link
       className="hover:-translate-y-2 hover:shadow-xl hover:dark:shadow-white/15 transition text-text dark:text-background bg-muted rounded-lg shadow-md flex flex-col items-center gap-2"

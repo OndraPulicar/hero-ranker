@@ -1,11 +1,6 @@
 import { API_URL } from "@/config";
 import Card from "./components/Card";
-
-export function getImageUrl(imageKey: string | null) {
-  if (!imageKey) return null;
-
-  return `${process.env.NEXT_PUBLIC_S3_HOSTNAME}/${imageKey}`;
-}
+import { getImageUrl } from "@/common";
 
 export type HomeData = {
   topSeries: {
