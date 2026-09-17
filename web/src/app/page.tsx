@@ -1,12 +1,10 @@
 import { API_URL } from "@/config";
 import Card from "./components/Card";
 
-const S3_URL = `https://${process.env.NEXT_PUBLIC_S3_BUCKET}.s3.${process.env.NEXT_PUBLIC_AWS_REGION}.amazonaws.com`;
-
 export function getImageUrl(imageKey: string | null) {
   if (!imageKey) return null;
 
-  return `${S3_URL}/${imageKey}`;
+  return `${process.env.NEXT_PUBLIC_S3_HOSTNAME}/${imageKey}`;
 }
 
 export type HomeData = {
