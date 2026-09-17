@@ -7,5 +7,6 @@ import { SeasonsController } from './seasons.controller';
   imports: [PrismaModule],
   controllers: [SeasonsController],
   providers: [SeasonsService],
+  exports: [SeasonsService],
 })
 export class SeasonsModule {}
