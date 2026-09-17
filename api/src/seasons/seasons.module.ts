@@ -8,4 +8,4 @@ import { SeasonsController } from './seasons.controller';
   controllers: [SeasonsController],
   providers: [SeasonsService],
 })
-export class CharactersModule {}
+export class SeasonsModule {}
