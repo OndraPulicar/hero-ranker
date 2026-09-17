@@ -27,6 +27,7 @@ export class HomeService {
         id: true,
         name: true,
         imageKey: true,
+        totalVotes: true,
       },
     });
   }
