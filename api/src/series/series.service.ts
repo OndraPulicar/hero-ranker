@@ -69,6 +69,7 @@ export class SeriesService {
       title: dto.title,
       yearOfProduction: dto.yearOfProduction,
       isLimited: dto.isLimited,
+      description: dto.description,
     };
 
     if (dto.seasons !== undefined) {
