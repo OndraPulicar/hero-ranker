@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { SeasonSchema } from './seasons';
+import { CharacterSchema } from './character';
 
 export const SeriesSchema = z.object({
   id: z.number(),
@@ -11,4 +12,10 @@ export const SeriesSchema = z.object({
   seasons: z.array(SeasonSchema).optional()
 });
 
-export type Season = z.infer<typeof SeriesSchema>;
+export const SeriesDetailSchema = SeriesSchema.extend({
+  seasons: z.array(SeasonSchema),
+  characters: z.array(CharacterSchema)
+});
+
+export type Series = z.infer<typeof SeriesSchema>;
+export type SeriesDetail = z.infer<typeof SeriesDetailSchema>;
