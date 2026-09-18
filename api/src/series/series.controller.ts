@@ -18,6 +18,9 @@ import { CreateSeriesDto } from './dto/create-series.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UpdateSeriesDto } from './dto/update-series.dto';
 import { CreateSeasonDto } from 'src/seasons/dto/create-season.dto';
+import { Series, SeriesDetail } from '@hero-ranker/shared/schemas/series';
+import { Character } from '@hero-ranker/shared/schemas/character';
+import { Season } from '@hero-ranker/shared/schemas/season';
 
 @Controller('series')
 export class SeriesController {
@@ -27,12 +30,12 @@ export class SeriesController {
   ) {}
 
   @Get()
-  getSeries() {
+  getSeries(): Promise<Series[]> {
     return this.seriesService.getSeries();
   }
 
   @Get(':id')
-  getSeriesById(@Param('id', ParseIntPipe) id: number) {
+  getSeriesById(@Param('id', ParseIntPipe) id: number): Promise<SeriesDetail> {
     return this.seriesService.getSeriesById(id);
   }
 
@@ -40,7 +43,7 @@ export class SeriesController {
   getCharactersBySeriesId(
     @Param('id', ParseIntPipe) id: number,
     @Query() query: GetCharactersBySeriesIdDto,
-  ) {
+  ): Promise<Character[]> {
     return this.seriesService.getCharactersBySeriesId(id, query);
   }
 
@@ -49,7 +52,7 @@ export class SeriesController {
   createSeries(
     @Body() dto: CreateSeriesDto,
     @UploadedFile() file?: Express.Multer.File,
-  ) {
+  ): Promise<Series> {
     return this.seriesService.createSeries(dto, file);
   }
 
@@ -57,7 +60,7 @@ export class SeriesController {
   createSeason(
     @Param('id', ParseIntPipe) id: number,
     @Body() dto: CreateSeasonDto,
-  ) {
+  ): Promise<Season> {
     return this.seasonsService.createSeason(id, dto);
   }
 
@@ -67,12 +70,12 @@ export class SeriesController {
     @Param('id', ParseIntPipe) id: number,
     @Body() dto: UpdateSeriesDto,
     @UploadedFile() file?: Express.Multer.File,
-  ) {
+  ): Promise<Series> {
     return this.seriesService.updateSeries(id, dto, file);
   }
 
   @Delete(':id')
-  deleteSeries(@Param('id', ParseIntPipe) id: number) {
+  deleteSeries(@Param('id', ParseIntPipe) id: number): Promise<Series> {
     return this.seriesService.deleteSeries(id);
   }
 }

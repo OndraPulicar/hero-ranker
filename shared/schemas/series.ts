@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { SeasonSchema } from './seasons';
+import { SeasonSchema } from './season';
 import { CharacterSchema } from './character';
 
 export const SeriesSchema = z.object({
