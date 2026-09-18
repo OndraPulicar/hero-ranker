@@ -12,4 +12,12 @@ export const CharacterSchema = z.object({
   imageKey: z.string().nullable()
 });
 
+export const CharacterCardSchema = CharacterSchema.pick({
+  id: true,
+  name: true,
+  imageKey: true,
+  totalVotes: true,
+});
+
 export type Character = z.infer<typeof CharacterSchema>;
+export type CharacterCard = z.infer<typeof CharacterCardSchema>;

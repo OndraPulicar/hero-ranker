@@ -3,7 +3,10 @@
   "version": "1.0.0",
   "private": true,
   "exports": {
-    "./schemas/*": "./schemas/*.ts"
+    "./schemas/*": {
+      "types": "./schemas/*.ts",
+      "default": "./schemas/*.ts"
+    }
   },
   "dependencies": {
     "zod": "^4.6.5"
