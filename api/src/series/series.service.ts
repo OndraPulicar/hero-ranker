@@ -5,6 +5,7 @@ import { CreateSeriesDto } from './dto/create-series.dto';
 import { Prisma } from 'generated/prisma/client';
 import { StorageService } from 'src/storage/storage.service';
 import { UpdateSeriesDto } from './dto/update-series.dto';
+import { Series } from '@hero-ranker/shared/schemas/series';
 
 @Injectable()
 export class SeriesService {
@@ -81,7 +82,7 @@ export class SeriesService {
     const series = await this.prismaService.series.create({ data });
 
     if (file) {
-      return this.uploadSeriesImageAndUpdate(series.id, file);
+      return this.uploadSeriesImageAndUpdate(series, file);
     }
 
     return series;
@@ -105,19 +106,23 @@ export class SeriesService {
   }
 
   private async uploadSeriesImageAndUpdate(
-    id: number,
+    series: Series,
     file: Express.Multer.File,
   ) {
-    const imageKey = this.storageService.createImageKey(id, 'series');
+    const imageKey = this.storageService.createImageKey(series.id, 'series');
 
     try {
       await this.storageService.upload(file.buffer, imageKey, file.mimetype);
       return this.prismaService.series.update({
-        where: { id },
+        where: { id: series.id },
         data: { imageKey },
       });
     } catch (error) {
-      this.logger.error(`Failed to upload image for series ${id}`, error);
+      this.logger.error(
+        `Failed to upload image for series ${series.id}`,
+        error,
+      );
+      return series;
     }
   }
 
