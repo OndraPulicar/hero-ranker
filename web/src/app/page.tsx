@@ -1,25 +1,16 @@
 import { API_URL } from "@/config";
 import Card from "./components/Card";
 import { getImageUrl } from "@/common";
-
-export type HomeData = {
-  topSeries: {
-    id: number;
-    title: string;
-    imageKey: string | null;
-    totalVotes: number;
-  }[];
-  topCharacters: {
-    id: number;
-    name: string;
-    imageKey: string | null;
-    totalVotes: number;
-  }[];
-};
+import { HomeDataSchema } from "@hero-ranker/shared/schemas/home";
 
 export default async function Home() {
   const response = await fetch(`${API_URL}/home`);
-  const homeData = await response.json() as HomeData;
+  const data = await response.json();
+
+  console.log(JSON.stringify(data, null, 2));
+
+  const homeData = HomeDataSchema.parse(data);
+  console.log(homeData)
 
   return (
     <main className="w-full px-6 py-10">
