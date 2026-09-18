@@ -2,14 +2,14 @@ import Image from 'next/image';
 import { PencilSparkles } from 'lucide-react';
 import { API_URL } from '@/config';
 import { getImageUrl } from '@/common';
+import { CharacterSchema } from '@hero-ranker/shared/schemas/character';
+
 
 export default async function Character({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   
   const response = await fetch(`${API_URL}/characters/${id}`);
-  const character = await response.json();
-  console.log(character);
- 
+  const character = CharacterSchema.parse(await response.json()); 
 
   return (
     <div className="mx-auto w-full max-w-3xl bg-[#0d1017] p-4 text-white font-sans md:p-6">
