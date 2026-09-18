@@ -4,12 +4,15 @@ import { API_URL } from '@/config';
 import { getImageUrl } from '@/common';
 import { CharacterSchema } from '@hero-ranker/shared/schemas/character';
 
-
-export default async function Character({ params }: { params: Promise<{ id: string }> }) {
+export default async function Character({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
   const { id } = await params;
-  
+
   const response = await fetch(`${API_URL}/characters/${id}`);
-  const character = CharacterSchema.parse(await response.json()); 
+  const character = CharacterSchema.parse(await response.json());
 
   return (
     <div className="mx-auto w-full max-w-3xl bg-[#0d1017] p-4 text-white font-sans md:p-6">
@@ -45,31 +48,37 @@ export default async function Character({ params }: { params: Promise<{ id: stri
                 Audience Score
               </h3>
               <p className="mt-1 text-base font-medium text-gray-300">
-                {character.totalVotes === 0 ? "Nobody has voted yet, be the first!" : "Exceptional standing"}
+                {character.totalVotes === 0
+                  ? 'Nobody has voted yet, be the first!'
+                  : 'Exceptional standing'}
               </p>
             </div>
 
             <div className="flex items-baseline rounded-2xl bg-[#facc15] px-4 py-3 text-black">
               <span className="text-3xl font-black md:text-4xl">
-                {
-                  character.points === 0
-                  ? "N/A"
-                  : Math.round(character.points / character.totalVotes / 3 * 10)
-                }
+                {character.points === 0
+                  ? 'N/A'
+                  : Math.round(
+                      (character.points / character.totalVotes / 3) * 10,
+                    )}
               </span>
               <span className="ml-1 text-xs font-bold opacity-75">
-                { character.points !== 0 ? "/10" : "" }
+                {character.points !== 0 ? '/10' : ''}
               </span>
             </div>
           </div>
 
           <div className="my-6">
             <div className="relative mb-1 mt-6">
-              <div 
+              <div
                 className="absolute bottom-full mb-1 flex -translate-x-1/2 flex-col items-center"
-                style={{ left: character.evilVotes > 0 
-                  ? (character.evilVotes / character.totalVotes * 100) + "%"
-                  : (character.totalVotes > 0) ? "0%" : "50%" 
+                style={{
+                  left:
+                    character.evilVotes > 0
+                      ? (character.evilVotes / character.totalVotes) * 100 + '%'
+                      : character.totalVotes > 0
+                        ? '0%'
+                        : '50%',
                 }}
               >
                 <span className="text-xs text-gray-400 leading-none">▼</span>

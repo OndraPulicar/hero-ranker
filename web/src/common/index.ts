@@ -5,9 +5,13 @@ export function getImageUrl(imageKey: string | null) {
     throw new Error('NEXT_PUBLIC_S3_HOSTNAME is not configured');
   }
 
-  const baseUrl = hostname.startsWith('http://') || hostname.startsWith('https://')
-    ? hostname
-    : `https://${hostname}`;
+  const baseUrl =
+    hostname.startsWith('http://') || hostname.startsWith('https://')
+      ? hostname
+      : `https://${hostname}`;
 
-  return new URL(imageKey ?? 'fallback/fallback-image.jpg', `${baseUrl}/`).toString();
+  return new URL(
+    imageKey ?? 'fallback/fallback-image.jpg',
+    `${baseUrl}/`,
+  ).toString();
 }
