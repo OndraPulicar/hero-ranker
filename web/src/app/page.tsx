@@ -5,8 +5,7 @@ import { HomeDataSchema } from '@hero-ranker/shared/schemas/home';
 
 export default async function Home() {
   const response = await fetch(`${API_URL}/home`);
-  const data = await response.json();
-  const homeData = HomeDataSchema.parse(data);
+  const homeData = HomeDataSchema.parse(await response.json());
 
   return (
     <main className="w-full px-6 py-10">

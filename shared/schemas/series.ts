@@ -9,16 +9,16 @@ export const SeriesSchema = z.object({
   isLimited: z.boolean(),
   imageKey: z.string().nullable(),
   description: z.string(),
-  seasons: z.array(SeasonSchema).optional()
+  seasons: z.array(SeasonSchema).optional(),
 });
 
 export const SeriesWithVotesSchema = SeriesSchema.extend({
-  totalVotes: z.number()
+  totalVotes: z.number(),
 });
 
 export const SeriesDetailSchema = SeriesSchema.extend({
   seasons: z.array(SeasonSchema),
-  characters: z.array(CharacterSchema)
+  characters: z.array(CharacterSchema),
 });
 
 export const SeriesCardSchema = SeriesSchema.pick({

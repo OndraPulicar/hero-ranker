@@ -9,7 +9,7 @@ export const CharacterSchema = z.object({
   totalVotes: z.number(),
   evilVotes: z.number(),
   points: z.number(),
-  imageKey: z.string().nullable()
+  imageKey: z.string().nullable(),
 });
 
 export const CharacterCardSchema = CharacterSchema.pick({
