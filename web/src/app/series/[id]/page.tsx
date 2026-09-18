@@ -1,13 +1,14 @@
 import Card from "@/app/components/Card";
 import { getImageUrl } from "@/common";
 import { API_URL } from "@/config";
+import { SeriesDetailSchema } from "@hero-ranker/shared/schemas/series";
 import Image from "next/image";
 
 export default async function Series({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
 
   const response = await fetch(`${API_URL}/series/${id}`);
-  const series = await response.json();
+  const series = SeriesDetailSchema.parse(await response.json());
 
   return (
     <div className="flex flex-col gap-4 w-full mx-auto max-w-7xl px-6 py-10">
@@ -30,7 +31,7 @@ export default async function Series({ params }: { params: Promise<{ id: string 
         <h3 className="text-lg font-bold mb-2">
           Seasons
         </h3>
-        {series.seasons.map((season: { id: number; title: string; seasonNumber: number; alternativeTitle: string }) => (
+        {series.seasons.map((season) => (
           <span key={season.id} className="pr-4">
             {season.alternativeTitle ?? `Season ${season.seasonNumber}`}
           </span>
