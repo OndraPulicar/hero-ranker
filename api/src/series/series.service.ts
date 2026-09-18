@@ -99,7 +99,7 @@ export class SeriesService {
     });
 
     if (file) {
-      return this.uploadSeriesImageAndUpdate(id, file);
+      return this.uploadSeriesImageAndUpdate(series, file);
     }
 
     return series;
