@@ -5,6 +5,7 @@ import { UpdateCharacterDto } from './dto/update-character.dto';
 import { Prisma } from 'generated/prisma/client';
 import { CreateCharacterDto } from './dto/create-character.dto';
 import { StorageService } from 'src/storage/storage.service';
+import { Character } from '@hero-ranker/shared/schemas/character';
 
 @Injectable()
 export class CharactersService {
@@ -98,26 +99,33 @@ export class CharactersService {
     });
 
     if (file) {
-      await this.uploadCharacterImageAndUpdate(id, file);
+      return await this.uploadCharacterImageAndUpdate(character, file);
     }
 
     return character;
   }
 
   private async uploadCharacterImageAndUpdate(
-    id: number,
+    character: Character,
     file: Express.Multer.File,
   ) {
-    const imageKey = this.storageService.createImageKey(id, 'characters');
+    const imageKey = this.storageService.createImageKey(
+      character.id,
+      'characters',
+    );
 
     try {
       await this.storageService.upload(file.buffer, imageKey, file.mimetype);
       return this.prismaService.character.update({
-        where: { id },
+        where: { id: character.id },
         data: { imageKey },
       });
     } catch (error) {
-      this.logger.error(`Failed to upload image for character ${id}`, error);
+      this.logger.error(
+        `Failed to upload image for character ${character.id}`,
+        error,
+      );
+      return character;
     }
   }
 
