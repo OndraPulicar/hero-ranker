@@ -17,6 +17,7 @@ export default function Character() {
   const id = params.id as string;
 
   const [character, setCharacter] = useState<CharacterType | null>(null);
+  const [isRatingModalOpen, setIsRatingModalOpen] = useState<boolean>(false);
 
   const loadCharacter = async () => {
     const response = await fetch(`${API_URL}/characters/${id}`);
@@ -112,7 +113,12 @@ export default function Character() {
             </div>
 
             <div className="flex flex-col items-center justify-center">
-              <button className="group flex flex-col items-center justify-center gap-1 rounded-2xl bg-gray-800/80 p-3.5 text-gray-200 transition-all hover:bg-gray-700/80 hover:scale-105 active:scale-95 cursor-pointer">
+              <button
+                onClick={() => {
+                  setIsRatingModalOpen(true);
+                }}
+                className="group flex flex-col items-center justify-center gap-1 rounded-2xl bg-gray-800/80 p-3.5 text-gray-200 transition-all hover:bg-gray-700/80 hover:scale-105 active:scale-95 cursor-pointer"
+              >
                 <PencilSparkles className="h-6 w-6 text-gray-300 transition-transform group-hover:rotate-12" />
               </button>
               <span className="mt-2 text-[10px] font-bold tracking-widest text-gray-400 uppercase">
@@ -121,11 +127,14 @@ export default function Character() {
             </div>
           </div>
         </div>
-        <CharacterRatingModal
-          onSubmit={(isEvil, points) => {
-            console.log(isEvil, points);
-          }}
-        ></CharacterRatingModal>
+        {isRatingModalOpen && (
+          <CharacterRatingModal
+            onSubmit={(isEvil, points) => {
+              console.log(isEvil, points);
+            }}
+            onClose={() => setIsRatingModalOpen(false)}
+          ></CharacterRatingModal>
+        )}
       </div>
     )
   );
