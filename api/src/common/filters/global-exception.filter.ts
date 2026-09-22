@@ -13,7 +13,7 @@ import { Prisma } from 'src/../generated/prisma/client';
 export class GlobalExceptionFilter implements ExceptionFilter {
   catch(exception: unknown, host: ArgumentsHost) {
     this.logger.error(`EXCEPTION: ${JSON.stringify(exception)}`);
-
+    console.error('EXCEPTION:', exception);
     const response = host.switchToHttp().getResponse<Response>();
 
     if (exception instanceof HttpException) {
