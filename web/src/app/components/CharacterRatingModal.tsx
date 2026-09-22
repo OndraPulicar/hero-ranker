@@ -1,10 +1,10 @@
 'use client';
 
-import { Vote } from '@hero-ranker/shared/schemas/votes';
+import { Vote, VotePoints } from '@hero-ranker/shared/schemas/votes';
 import { useEffect, useState } from 'react';
 
 type CharacterRatingModalProps = {
-  onSubmit: (isEvil: boolean, points: number) => void;
+  onSubmit: (isEvil: boolean, points: VotePoints) => void;
   onClose: () => void;
   userVote: Vote | undefined;
 };
@@ -15,7 +15,7 @@ export default function CharacterRatingModal({
   userVote,
 }: CharacterRatingModalProps) {
   const [isEvil, setIsEvil] = useState<boolean | undefined>(undefined);
-  const [points, setPoints] = useState<1 | 2 | 3 | undefined>(undefined);
+  const [points, setPoints] = useState<VotePoints | undefined>(undefined);
   const [step, setStep] = useState<1 | 2>(1);
 
   const rateEvil = (isEvil: boolean) => {
@@ -23,7 +23,7 @@ export default function CharacterRatingModal({
     setStep(2);
   };
 
-  const ratePoints = (points: 1 | 2 | 3) => {
+  const ratePoints = (points: VotePoints) => {
     onSubmit(isEvil!, points);
     onClose();
   };

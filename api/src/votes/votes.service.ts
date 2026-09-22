@@ -4,6 +4,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateVoteDto } from './dto/create-vote.dto';
 import { GetVotesDto } from './dto/get-votes.dto';
 import { UpdateVoteDto } from './dto/update-vote.dto';
+import { VoteSchema } from '@hero-ranker/shared/schemas/votes';
 
 type CurrentVote = Prisma.VoteGetPayload<{
   select: {
@@ -42,12 +43,12 @@ export class VotesService {
         },
       });
 
-      return createdVote;
+      return VoteSchema.parse(createdVote);
     });
   }
 
-  getVotes(query: GetVotesDto) {
-    return this.prismaService.vote.findMany({
+  async getVotes(query: GetVotesDto) {
+    const votes = await this.prismaService.vote.findMany({
       where: {
         characterId: query.characterId,
         userId: query.userId,
@@ -55,6 +56,8 @@ export class VotesService {
       orderBy: { createdAt: 'desc' },
       take: query.limit,
     });
+
+    return VoteSchema.array().parse(votes);
   }
 
   async getVoteById(id: number) {
@@ -66,7 +69,7 @@ export class VotesService {
       throw new NotFoundException(`Vote with id ${id} not found`);
     }
 
-    return vote;
+    return VoteSchema.parse(vote);
   }
 
   async updateVote(id: number, updateVoteDto: UpdateVoteDto) {
@@ -100,7 +103,7 @@ export class VotesService {
         });
       }
 
-      return updatedVote;
+      return VoteSchema.parse(updatedVote);
     });
   }
 
@@ -119,7 +122,7 @@ export class VotesService {
         },
       });
 
-      return tx.vote.delete({ where: { id } });
+      return VoteSchema.parse(tx.vote.delete({ where: { id } }));
     });
   }
 
@@ -140,6 +143,6 @@ export class VotesService {
       throw new NotFoundException(`Vote with id ${id} not found`);
     }
 
-    return currentVote;
+    return VoteSchema.parse(currentVote);
   }
 }
