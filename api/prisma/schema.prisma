@@ -64,10 +64,11 @@ model Character {
 }
 
 model User {
-  id          Int       @id @default(autoincrement())
-  username    String
-  email       String    @unique
-  createdAt   DateTime  @default(now())
+  id            Int       @id @default(autoincrement())
+  username      String    @unique
+  email         String    @unique
+  passwordHash  String?    
+  createdAt     DateTime  @default(now())
 
   votes       Vote[]
 }
