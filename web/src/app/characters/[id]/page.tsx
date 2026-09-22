@@ -133,6 +133,7 @@ export default function Character() {
               console.log(isEvil, points);
             }}
             onClose={() => setIsRatingModalOpen(false)}
+            userVote={undefined}
           ></CharacterRatingModal>
         )}
       </div>

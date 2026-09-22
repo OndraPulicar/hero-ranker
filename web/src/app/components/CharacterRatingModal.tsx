@@ -1,15 +1,18 @@
 'use client';
 
-import { useState } from 'react';
+import { Vote } from '@hero-ranker/shared/schemas/votes';
+import { useEffect, useState } from 'react';
 
 type CharacterRatingModalProps = {
   onSubmit: (isEvil: boolean, points: number) => void;
   onClose: () => void;
+  userVote: Vote | undefined;
 };
 
 export default function CharacterRatingModal({
   onSubmit,
   onClose,
+  userVote,
 }: CharacterRatingModalProps) {
   const [isEvil, setIsEvil] = useState<boolean | undefined>(undefined);
   const [points, setPoints] = useState<1 | 2 | 3 | undefined>(undefined);
@@ -25,6 +28,13 @@ export default function CharacterRatingModal({
     onClose();
   };
 
+  useEffect(() => {
+    if (userVote) {
+      setIsEvil(userVote.isEvil);
+      setPoints(userVote.points);
+    }
+  }, []);
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 text-black">
       <div className="relative w-full max-w-md rounded-xl bg-white p-6 shadow-2xl">
@@ -33,7 +43,11 @@ export default function CharacterRatingModal({
             <div className="text-center py-4">Is this character evil?</div>
             <div className="flex gap-4">
               <button
-                className="flex-1 p-2 border-1 border-black rounded-xl shadow-xl"
+                className={`flex-1 p-2 border-1 border-black rounded-xl shadow-xl ${
+                  isEvil === true
+                    ? 'border-red-500 bg-red-500 text-white'
+                    : 'border-gray-300 bg-white'
+                }`}
                 onClick={() => {
                   rateEvil(false);
                 }}
@@ -41,7 +55,11 @@ export default function CharacterRatingModal({
                 NO
               </button>
               <button
-                className="flex-1 p-2 border-1 border-black rounded-xl shadow-xl"
+                className={`flex-1 p-2 border-1 border-black rounded-xl shadow-xl ${
+                  isEvil === false
+                    ? 'border-red-500 bg-red-500 text-white'
+                    : 'border-gray-300 bg-white'
+                }`}
                 onClick={() => {
                   rateEvil(true);
                 }}
@@ -58,7 +76,11 @@ export default function CharacterRatingModal({
             </div>
             <div className="flex gap-4">
               <button
-                className="flex-1 p-2 border-1 border-black rounded-xl shadow-xl"
+                className={`flex-1 p-2 border-1 border-black rounded-xl shadow-xl ${
+                  points === 1
+                    ? 'border-red-500 bg-red-500 text-white'
+                    : 'border-gray-300 bg-white'
+                }`}
                 onClick={() => {
                   ratePoints(1);
                 }}
@@ -66,7 +88,11 @@ export default function CharacterRatingModal({
                 I hate them!
               </button>
               <button
-                className="flex-1 p-2 border-1 border-black rounded-xl shadow-xl"
+                className={`flex-1 p-2 border-1 border-black rounded-xl shadow-xl ${
+                  points === 2
+                    ? 'border-red-500 bg-red-500 text-white'
+                    : 'border-gray-300 bg-white'
+                }`}
                 onClick={() => {
                   ratePoints(2);
                 }}
@@ -74,7 +100,11 @@ export default function CharacterRatingModal({
                 Meh.
               </button>
               <button
-                className="flex-1 p-2 border-1 border-black rounded-xl shadow-xl"
+                className={`flex-1 p-2 border-1 border-black rounded-xl shadow-xl ${
+                  points === 3
+                    ? 'border-red-500 bg-red-500 text-white'
+                    : 'border-gray-300 bg-white'
+                }`}
                 onClick={() => {
                   ratePoints(3);
                 }}

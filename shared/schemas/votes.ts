@@ -5,7 +5,7 @@ export const VoteSchema = z.object({
   characterId: z.number(),
   userId: z.number(),
   isEvil: z.boolean(),
-  points: z.number(),
+  points: z.union([z.literal(1), z.literal(2), z.literal(3)]),
 });
 
 export type Vote = z.infer<typeof VoteSchema>;
