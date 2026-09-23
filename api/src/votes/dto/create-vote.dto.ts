@@ -7,11 +7,6 @@ export class CreateVoteDto {
   @Min(1)
   characterId!: number;
 
-  @Type(() => Number)
-  @IsInt()
-  @Min(1)
-  userId!: number;
-
   @Type(() => Boolean)
   @IsBoolean()
   isEvil!: boolean;

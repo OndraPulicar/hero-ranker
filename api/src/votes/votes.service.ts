@@ -1,44 +1,40 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { Prisma } from 'src/../generated/prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { CreateVoteDto } from './dto/create-vote.dto';
 import { GetVotesDto } from './dto/get-votes.dto';
 import { UpdateVoteDto } from './dto/update-vote.dto';
-import { VoteSchema } from '@hero-ranker/shared/schemas/votes';
-
-type CurrentVote = Prisma.VoteGetPayload<{
-  select: {
-    characterId: true;
-    isEvil: true;
-    points: true;
-  };
-}>;
+import { Vote, VoteSchema } from '@hero-ranker/shared/schemas/votes';
+import { CreateVoteData } from './types/create-vote-data';
 
 @Injectable()
 export class VotesService {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async createVote(createVoteDto: CreateVoteDto) {
+  async createVote(createVoteData: CreateVoteData) {
     return this.prismaService.$transaction(async (tx) => {
       const createdVote = await tx.vote.create({
-        data: createVoteDto,
+        data: createVoteData,
       });
 
       await tx.character.update({
         where: {
-          id: createVoteDto.characterId,
+          id: createVoteData.characterId,
         },
         data: {
           totalVotes: {
             increment: 1,
           },
-          ...(createVoteDto.isEvil && {
+          ...(createVoteData.isEvil && {
             evilVotes: {
               increment: 1,
             },
           }),
           points: {
-            increment: createVoteDto.points,
+            increment: createVoteData.points,
           },
         },
       });
@@ -72,9 +68,13 @@ export class VotesService {
     return VoteSchema.parse(vote);
   }
 
-  async updateVote(id: number, updateVoteDto: UpdateVoteDto) {
+  async updateVote(id: number, updateVoteDto: UpdateVoteDto, userId: number) {
     return this.prismaService.$transaction(async (tx) => {
       const currentVote = await this.getCurrentVoteOrThrowError(tx, id);
+
+      if (currentVote.userId !== userId) {
+        throw new ForbiddenException();
+      }
 
       const nextIsEvil = updateVoteDto.isEvil ?? currentVote.isEvil;
       const nextPoints = updateVoteDto.points ?? currentVote.points;
@@ -129,19 +129,23 @@ export class VotesService {
   private async getCurrentVoteOrThrowError(
     tx: Prisma.TransactionClient,
     id: number,
-  ): Promise<CurrentVote> {
+  ): Promise<Vote> {
     const currentVote = await tx.vote.findUnique({
       where: { id },
       select: {
+        id: true,
         characterId: true,
         isEvil: true,
         points: true,
+        userId: true,
       },
     });
 
     if (!currentVote) {
       throw new NotFoundException(`Vote with id ${id} not found`);
     }
+
+    console.log('updated vote: ', currentVote);
 
     return VoteSchema.parse(currentVote);
   }
