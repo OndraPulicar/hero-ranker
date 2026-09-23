@@ -107,9 +107,13 @@ export class VotesService {
     });
   }
 
-  async deleteVote(id: number) {
+  async deleteVote(id: number, userId: number) {
     return this.prismaService.$transaction(async (tx) => {
       const currentVote = await this.getCurrentVoteOrThrowError(tx, id);
+
+      if (currentVote.userId !== userId) {
+        throw new ForbiddenException();
+      }
 
       await tx.character.update({
         where: { id: currentVote.characterId },
@@ -122,7 +126,7 @@ export class VotesService {
         },
       });
 
-      return VoteSchema.parse(tx.vote.delete({ where: { id } }));
+      return VoteSchema.parse(await tx.vote.delete({ where: { id } }));
     });
   }
 
@@ -145,7 +149,7 @@ export class VotesService {
       throw new NotFoundException(`Vote with id ${id} not found`);
     }
 
-    console.log('updated vote: ', currentVote);
+    console.log('updated vote in getCurrentVoteOrThrowError: ', currentVote);
 
     return VoteSchema.parse(currentVote);
   }

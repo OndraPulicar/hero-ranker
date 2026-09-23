@@ -59,8 +59,12 @@ export class VotesController {
     );
   }
 
+  @UseGuards(JwtAuthGuard)
   @Delete(':id')
-  deleteVote(@Param('id', ParseIntPipe) id: number): Promise<Vote> {
-    return this.votesService.deleteVote(id);
+  deleteVote(
+    @Req() request: Request,
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<Vote> {
+    return this.votesService.deleteVote(id, request.user!.userId);
   }
 }
