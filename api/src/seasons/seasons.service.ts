@@ -1,7 +1,7 @@
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateSeasonDto } from './dto/create-season.dto';
 import { UpdateSeasonDto } from './dto/update-season.dto';
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 
 @Injectable()
 export class SeasonsService {
@@ -21,6 +21,15 @@ export class SeasonsService {
   }
 
   async deleteSeason(id: number) {
-    return this.prismaService.season.delete({ where: { id } });
+    const characters = await this.prismaService.character.findMany({
+      where: { seasons: { some: { id } } },
+      select: { id: true },
+    });
+
+    if (characters.length > 0) {
+      throw new ConflictException(
+        `Cannot delete season (ID: ${id}) because it has associated characters (ID: ${characters.map((character) => character.id).join(', ')})`,
+      );
+    }
   }
 }
