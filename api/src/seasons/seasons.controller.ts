@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Param,
   ParseIntPipe,
   Patch,
@@ -22,5 +23,11 @@ export class SeasonsController {
     @Body() dto: UpdateSeasonDto,
   ) {
     return this.seasonsService.updateSeason(id, dto);
+  }
+
+  @UseGuards(JwtAuthGuard, AdminGuard)
+  @Delete(':id')
+  deleteSeason(@Param('id', ParseIntPipe) id: number) {
+    return this.seasonsService.deleteSeason(id);
   }
 }
