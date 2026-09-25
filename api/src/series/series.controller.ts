@@ -10,6 +10,7 @@ import {
   UploadedFile,
   Patch,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
 import { GetCharactersBySeriesIdDto } from './dto/get-characters-by-series-id.dto';
 import { SeriesService } from './series.service';
@@ -21,6 +22,8 @@ import { CreateSeasonDto } from 'src/seasons/dto/create-season.dto';
 import { Series, SeriesDetail } from '@hero-ranker/shared/schemas/series';
 import { Character } from '@hero-ranker/shared/schemas/character';
 import { Season } from '@hero-ranker/shared/schemas/season';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { AdminGuard } from 'src/auth/admin.guard';
 
 @Controller('series')
 export class SeriesController {
@@ -47,6 +50,7 @@ export class SeriesController {
     return this.seriesService.getCharactersBySeriesId(id, query);
   }
 
+  @UseGuards(JwtAuthGuard, AdminGuard)
   @Post()
   @UseInterceptors(FileInterceptor('image'))
   createSeries(
@@ -56,6 +60,7 @@ export class SeriesController {
     return this.seriesService.createSeries(dto, file);
   }
 
+  @UseGuards(JwtAuthGuard, AdminGuard)
   @Post(':id/seasons')
   createSeason(
     @Param('id', ParseIntPipe) id: number,
@@ -64,6 +69,7 @@ export class SeriesController {
     return this.seasonsService.createSeason(id, dto);
   }
 
+  @UseGuards(JwtAuthGuard, AdminGuard)
   @Patch(':id')
   @UseInterceptors(FileInterceptor('image'))
   updateSeries(
@@ -74,6 +80,7 @@ export class SeriesController {
     return this.seriesService.updateSeries(id, dto, file);
   }
 
+  @UseGuards(JwtAuthGuard, AdminGuard)
   @Delete(':id')
   deleteSeries(@Param('id', ParseIntPipe) id: number): Promise<Series> {
     return this.seriesService.deleteSeries(id);
