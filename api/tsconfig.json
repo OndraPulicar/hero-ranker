@@ -17,20 +17,21 @@
       "src/*": ["./src/*"],
       "generated/*": ["./generated/*"]
     },
+    "types": ["node", "jest"],
     "incremental": true,
     "skipLibCheck": true,
     "strictNullChecks": true,
     "forceConsistentCasingInFileNames": true,
     "noImplicitAny": false,
     "strictBindCallApply": false,
-    "noFallthroughCasesInSwitch": false,
+    "noFallthroughCasesInSwitch": false
   },
   "include": [
     "src/**/*.ts",
     "test/**/*.ts",
-    "generated/**/*.ts", 
+    "generated/**/*.ts",
     "prisma/**/*.ts",
     "prisma.config.ts"
   ],
-  "exclude": ["dist", "node_modules"],
+  "exclude": ["dist", "node_modules"]
 }
