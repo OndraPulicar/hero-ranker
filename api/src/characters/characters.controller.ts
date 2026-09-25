@@ -10,6 +10,7 @@ import {
   Post,
   Patch,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
 import { GetCharactersDto } from './dto/get-characters.dto';
 import { CharactersService } from './characters.service';
@@ -17,6 +18,8 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { CreateCharacterDto } from './dto/create-character.dto';
 import { UpdateCharacterDto } from './dto/update-character.dto';
 import { Character } from '@hero-ranker/shared/schemas/character';
+import { AdminGuard } from 'src/auth/admin.guard';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 
 @Controller('characters')
 export class CharactersController {
@@ -32,6 +35,7 @@ export class CharactersController {
     return this.charactersService.getCharacterById(id);
   }
 
+  @UseGuards(JwtAuthGuard, AdminGuard)
   @Post()
   @UseInterceptors(FileInterceptor('image'))
   createCharacter(
@@ -41,6 +45,7 @@ export class CharactersController {
     return this.charactersService.createCharacter(dto, file);
   }
 
+  @UseGuards(JwtAuthGuard, AdminGuard)
   @Patch(':id')
   @UseInterceptors(FileInterceptor('image'))
   updateCharacter(
@@ -51,6 +56,7 @@ export class CharactersController {
     return this.charactersService.updateCharacter(id, dto, file);
   }
 
+  @UseGuards(JwtAuthGuard, AdminGuard)
   @Delete(':id')
   deleteCharacter(@Param('id', ParseIntPipe) id: number): Promise<Character> {
     return this.charactersService.deleteCharacter(id);
