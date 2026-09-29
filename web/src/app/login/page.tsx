@@ -1,7 +1,36 @@
+'use client';
+
+import { API_URL } from '@/config';
+import { useForm } from 'react-hook-form';
+
+type LoginFormData = {
+  email: string;
+  password: string;
+};
+
 export default function Login() {
+  const { register, handleSubmit } = useForm<LoginFormData>();
+
+  const onSubmit = async (data: LoginFormData) => {
+    const response = await fetch(`${API_URL}/auth/login`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
+    const authToken = (await response.json()) as unknown;
+    console.log(authToken);
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center px-4">
-      <form className="w-full max-w-md bg-surface rounded-2xl shadow-xl p-8">
+      <form
+        onSubmit={(event) => {
+          void handleSubmit(onSubmit)(event);
+        }}
+        className="w-full max-w-md bg-surface rounded-2xl shadow-xl p-8"
+      >
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-text">Welcome back</h1>
           <p className="mt-2 text-muted">Log in to your Hero Ranker account</p>
@@ -24,6 +53,7 @@ export default function Login() {
                 text-text placeholder:text-muted/50
                 outline-none transition
                 focus:border-primary focus:ring-2 focus:ring-primary/20"
+              {...register('email')}
             />
           </div>
 
@@ -49,6 +79,7 @@ export default function Login() {
                 text-text placeholder:text-muted/50
                 outline-none transition
                 focus:border-primary focus:ring-2 focus:ring-primary/20"
+              {...register('password')}
             />
           </div>
 
