@@ -10,19 +10,19 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  private INCORRECT_AUTH_DATA = 'Incorrect authorization data.';
+  private static readonly INVALID_CREDENTIALS = `Invalid email or password.`;
 
   async login(email: string, password: string) {
     const user = await this.prismaService.user.findUnique({ where: { email } });
 
     if (!user) {
-      throw new UnauthorizedException(this.INCORRECT_AUTH_DATA);
+      throw new UnauthorizedException(AuthService.INVALID_CREDENTIALS);
     }
 
     const passwordMatches = await bcrypt.compare(password, user.passwordHash);
 
     if (!passwordMatches) {
-      throw new UnauthorizedException(this.INCORRECT_AUTH_DATA);
+      throw new UnauthorizedException(AuthService.INVALID_CREDENTIALS);
     }
 
     const accessToken = await this.jwtService.signAsync({ sub: user.id });
