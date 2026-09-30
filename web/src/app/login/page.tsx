@@ -1,6 +1,11 @@
 'use client';
 
 import { API_URL } from '@/config';
+import {
+  LoginErrorSchema,
+  LoginResponseSchema,
+} from '@hero-ranker/shared/schemas/auth';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 type LoginFormData = {
@@ -8,19 +13,39 @@ type LoginFormData = {
   password: string;
 };
 
+const logIn = async (data: LoginFormData) => {
+  const response = await fetch(`${API_URL}/auth/login`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  });
+  const responseJson = (await response.json()) as unknown;
+
+  if (!response.ok) {
+    const errorResponse = LoginErrorSchema.parse(responseJson);
+    throw new Error(errorResponse.message);
+  }
+
+  const loginResponse = LoginResponseSchema.parse(responseJson);
+  return loginResponse.accessToken;
+};
+
 export default function Login() {
   const { register, handleSubmit } = useForm<LoginFormData>();
+  const [error, setError] = useState<string | undefined>();
 
   const onSubmit = async (data: LoginFormData) => {
-    const response = await fetch(`${API_URL}/auth/login`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data),
-    });
-    const authToken = (await response.json()) as unknown;
-    console.log(authToken);
+    try {
+      const authToken = await logIn(data);
+      console.log(authToken);
+      setError(undefined);
+    } catch (error) {
+      if (error instanceof Error) {
+        setError(error.message);
+      }
+    }
   };
 
   return (
@@ -34,6 +59,7 @@ export default function Login() {
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-text">Welcome back</h1>
           <p className="mt-2 text-muted">Log in to your Hero Ranker account</p>
+          {error && <p className="mt-2 text-primary">{error}</p>}
         </div>
 
         <div className="flex flex-col gap-5">
