@@ -14,6 +14,7 @@ type LoginFormData = {
 const logIn = async (data: LoginFormData): Promise<void> => {
   const response = await fetch(`${API_URL}/auth/login`, {
     method: 'POST',
+    credentials: 'include',
     headers: {
       'Content-Type': 'application/json',
     },
