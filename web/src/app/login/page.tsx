@@ -1,19 +1,17 @@
 'use client';
 
 import { API_URL } from '@/config';
-import {
-  LoginErrorSchema,
-  LoginResponseSchema,
-} from '@hero-ranker/shared/schemas/auth';
+import { LoginErrorSchema } from '@hero-ranker/shared/schemas/auth';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { useRouter } from 'next/navigation';
 
 type LoginFormData = {
   email: string;
   password: string;
 };
 
-const logIn = async (data: LoginFormData) => {
+const logIn = async (data: LoginFormData): Promise<void> => {
   const response = await fetch(`${API_URL}/auth/login`, {
     method: 'POST',
     headers: {
@@ -27,20 +25,18 @@ const logIn = async (data: LoginFormData) => {
     const errorResponse = LoginErrorSchema.parse(responseJson);
     throw new Error(errorResponse.message);
   }
-
-  const loginResponse = LoginResponseSchema.parse(responseJson);
-  return loginResponse.accessToken;
 };
 
 export default function Login() {
   const { register, handleSubmit } = useForm<LoginFormData>();
   const [error, setError] = useState<string | undefined>();
+  const router = useRouter();
 
   const onSubmit = async (data: LoginFormData) => {
     try {
-      const authToken = await logIn(data);
-      console.log(authToken);
+      await logIn(data);
       setError(undefined);
+      router.push('/');
     } catch (error) {
       if (error instanceof Error) {
         setError(error.message);
