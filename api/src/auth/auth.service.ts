@@ -2,6 +2,7 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from 'src/prisma/prisma.service';
 import bcrypt from 'bcrypt';
+import { UserInfoSchema } from '@hero-ranker/shared/schemas/user';
 
 @Injectable()
 export class AuthService {
@@ -28,5 +29,16 @@ export class AuthService {
     const accessToken = await this.jwtService.signAsync({ sub: user.id });
 
     return { accessToken };
+  }
+
+  async getMe(userId: number) {
+    const user = await this.prismaService.user.findUnique({
+      where: { id: userId },
+      select: {
+        username: true,
+        email: true,
+      },
+    });
+    return UserInfoSchema.parse(user);
   }
 }

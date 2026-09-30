@@ -6,3 +6,8 @@ export const UserSchema = z.object({
   email: z.string(),
   passwordHash: z.string(),
 });
+
+export const UserInfoSchema = UserSchema.pick({
+  username: true,
+  email: true,
+});
