@@ -11,3 +11,5 @@ export const UserInfoSchema = UserSchema.pick({
   username: true,
   email: true,
 });
+
+export type UserInfo = z.infer<typeof UserInfoSchema>;
