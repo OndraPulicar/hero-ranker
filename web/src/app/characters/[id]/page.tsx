@@ -16,14 +16,16 @@ import {
 import CharacterRatingModal from '@/app/components/CharacterRatingModal';
 import { useParams } from 'next/navigation';
 import { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { VotePoints } from '@hero-ranker/shared/schemas/votes';
 
 export default function Character() {
   const params = useParams();
-  const id = params.id as string;
+  const id = parseInt(params.id as string);
 
   const [isRatingModalOpen, setIsRatingModalOpen] = useState<boolean>(false);
 
+  const queryClient = useQueryClient();
   const {
     data: character,
     isPending,
@@ -46,6 +48,58 @@ export default function Character() {
       const responseJson = (await response.json()) as unknown;
 
       return CharacterSchema.parse(responseJson);
+    },
+  });
+
+  const voteMutation = useMutation({
+    mutationFn: async ({
+      voteId,
+      characterId,
+      isEvil,
+      points,
+    }: {
+      voteId?: number;
+      characterId: number;
+      isEvil: boolean;
+      points: VotePoints;
+    }) => {
+      const requestParams = {
+        credentials: 'include' as const,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      };
+      let response;
+
+      if (voteId !== undefined) {
+        response = await fetch(`${API_URL}/votes/${voteId}`, {
+          ...requestParams,
+          method: 'PATCH',
+          body: JSON.stringify({
+            points,
+            isEvil,
+          }),
+        });
+      } else {
+        response = await fetch(`${API_URL}/votes`, {
+          ...requestParams,
+          method: 'POST',
+          body: JSON.stringify({
+            characterId,
+            points,
+            isEvil,
+          }),
+        });
+      }
+
+      if (!response.ok) {
+        throw new Error(`Failed to save vote (${response.status})`);
+      }
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: ['character', id],
+      });
     },
   });
 
@@ -181,7 +235,12 @@ export default function Character() {
       {isRatingModalOpen && (
         <CharacterRatingModal
           onSubmit={(isEvil, points) => {
-            console.log(isEvil, points);
+            voteMutation.mutate({
+              isEvil,
+              points,
+              voteId: character.vote?.id,
+              characterId: id,
+            });
           }}
           onClose={() => setIsRatingModalOpen(false)}
           userVote={character.vote ?? undefined}
