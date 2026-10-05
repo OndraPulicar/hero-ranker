@@ -1,7 +1,12 @@
 'use client';
 
 import Image from 'next/image';
-import { PencilSparkles } from 'lucide-react';
+import {
+  PencilSparkles,
+  FaceNeutral,
+  ThumbsUp,
+  ThumbsDown,
+} from 'lucide-react';
 import { API_URL } from '@/config';
 import { getImageUrl } from '@/common';
 import {
@@ -31,6 +36,8 @@ export default function Character() {
       console.error(error);
     });
   }, [id]);
+
+  console.log('character', character);
 
   return (
     character && (
@@ -119,12 +126,28 @@ export default function Character() {
                 onClick={() => {
                   setIsRatingModalOpen(true);
                 }}
-                className="group flex flex-col items-center justify-center gap-1 rounded-2xl bg-gray-800/80 p-3.5 text-gray-200 transition-all hover:bg-gray-700/80 hover:scale-105 active:scale-95 cursor-pointer"
+                className={`${
+                  character.vote
+                    ? character.vote.isEvil
+                      ? 'bg-red-600'
+                      : 'bg-blue-500'
+                    : 'bg-gray-800/80'
+                } group flex flex-col items-center justify-center gap-1 rounded-2xl p-3.5 text-gray-200 transition-all hover:scale-105 active:scale-95 cursor-pointer`}
               >
-                <PencilSparkles className="h-6 w-6 text-gray-300 transition-transform group-hover:rotate-12" />
+                {character.vote ? (
+                  character.vote.points === 1 ? (
+                    <ThumbsDown className="h-6 w-6" />
+                  ) : character.vote.points === 2 ? (
+                    <FaceNeutral className="h-6 w-6" />
+                  ) : (
+                    <ThumbsUp className="h-6 w-6" />
+                  )
+                ) : (
+                  <PencilSparkles className="h-6 w-6 text-gray-300 transition-transform group-hover:rotate-12" />
+                )}
               </button>
               <span className="mt-2 text-[10px] font-bold tracking-widest text-gray-400 uppercase">
-                Vote Now!
+                {character.vote ? 'Your Vote' : 'Vote Now!'}
               </span>
             </div>
           </div>
