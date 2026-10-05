@@ -11,12 +11,15 @@ describe('CharactersService', () => {
       findMany: jest.fn(),
       findUnique: jest.fn(),
     },
+    vote: {
+      findUnique: jest.fn(),
+    },
   };
   let service: CharactersService;
 
   beforeEach(() => {
     jest.clearAllMocks();
-    service = new CharactersService(prismaService as never);
+    service = new CharactersService(prismaService as never, {} as never);
   });
 
   describe('getCharacters', () => {
@@ -39,15 +42,47 @@ describe('CharactersService', () => {
   });
 
   describe('getCharacterById', () => {
-    it('returns a character with its relations', async () => {
+    it('returns a character with the current user vote', async () => {
       const character = { id: 1, name: 'Hero' };
+      const vote = {
+        id: 3,
+        characterId: 1,
+        userId: 7,
+        isEvil: true,
+        points: 3,
+        createdAt: new Date(),
+      };
       prismaService.character.findUnique.mockResolvedValue(character);
+      prismaService.vote.findUnique.mockResolvedValue(vote);
 
-      await expect(service.getCharacterById(1)).resolves.toEqual(character);
+      await expect(service.getCharacterById(1, 7)).resolves.toEqual({
+        ...character,
+        vote: {
+          id: 3,
+          characterId: 1,
+          userId: 7,
+          isEvil: true,
+          points: 3,
+        },
+      });
       expect(prismaService.character.findUnique).toHaveBeenCalledWith({
         where: { id: 1 },
         include: { series: true, seasons: true },
       });
+      expect(prismaService.vote.findUnique).toHaveBeenCalledWith({
+        where: { characterId_userId: { characterId: 1, userId: 7 } },
+      });
+    });
+
+    it('returns a null vote for guests', async () => {
+      const character = { id: 1, name: 'Hero' };
+      prismaService.character.findUnique.mockResolvedValue(character);
+
+      await expect(service.getCharacterById(1)).resolves.toEqual({
+        ...character,
+        vote: null,
+      });
+      expect(prismaService.vote.findUnique).not.toHaveBeenCalled();
     });
 
     it('throws when the character does not exist', async () => {

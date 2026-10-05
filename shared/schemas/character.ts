@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { VoteSchema } from './votes';
 
 export const CharacterSchema = z.object({
   id: z.number(),
@@ -10,6 +11,7 @@ export const CharacterSchema = z.object({
   evilVotes: z.number(),
   points: z.number(),
   imageKey: z.string().nullable(),
+  vote: VoteSchema.nullable().optional(),
 });
 
 export const CharacterCardSchema = CharacterSchema.pick({

@@ -20,7 +20,9 @@ export default function Character() {
   const [isRatingModalOpen, setIsRatingModalOpen] = useState<boolean>(false);
 
   const loadCharacter = async () => {
-    const response = await fetch(`${API_URL}/characters/${id}`);
+    const response = await fetch(`${API_URL}/characters/${id}`, {
+      credentials: 'include',
+    });
     setCharacter(CharacterSchema.parse(await response.json()));
   };
 
@@ -133,7 +135,7 @@ export default function Character() {
               console.log(isEvil, points);
             }}
             onClose={() => setIsRatingModalOpen(false)}
-            userVote={undefined}
+            userVote={character.vote ?? undefined}
           ></CharacterRatingModal>
         )}
       </div>

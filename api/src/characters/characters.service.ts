@@ -6,6 +6,7 @@ import { Prisma } from 'generated/prisma/client';
 import { CreateCharacterDto } from './dto/create-character.dto';
 import { StorageService } from 'src/storage/storage.service';
 import { Character } from '@hero-ranker/shared/schemas/character';
+import { VoteSchema } from '@hero-ranker/shared/schemas/votes';
 
 @Injectable()
 export class CharactersService {
@@ -27,7 +28,7 @@ export class CharactersService {
     });
   }
 
-  async getCharacterById(id: number) {
+  async getCharacterById(id: number, userId?: number) {
     const character = await this.prismaService.character.findUnique({
       where: { id },
       include: {
@@ -40,7 +41,13 @@ export class CharactersService {
       throw new NotFoundException(`Character with id ${id} not found`);
     }
 
-    return character;
+    const vote = userId
+      ? await this.prismaService.vote.findUnique({
+          where: { characterId_userId: { characterId: id, userId } },
+        })
+      : null;
+
+    return { ...character, vote: vote ? VoteSchema.parse(vote) : null };
   }
 
   async createCharacter(dto: CreateCharacterDto, file?: Express.Multer.File) {

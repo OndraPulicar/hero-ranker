@@ -4,6 +4,7 @@ import {
   Param,
   ParseIntPipe,
   Query,
+  Req,
   UseInterceptors,
   UploadedFile,
   Body,
@@ -20,6 +21,8 @@ import { UpdateCharacterDto } from './dto/update-character.dto';
 import { Character } from '@hero-ranker/shared/schemas/character';
 import { AdminGuard } from 'src/auth/admin.guard';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { OptionalJwtAuthGuard } from 'src/auth/optional-jwt-auth.guard';
+import { type Request } from 'express';
 
 @Controller('characters')
 export class CharactersController {
@@ -31,8 +34,12 @@ export class CharactersController {
   }
 
   @Get(':id')
-  getCharacterById(@Param('id', ParseIntPipe) id: number): Promise<Character> {
-    return this.charactersService.getCharacterById(id);
+  @UseGuards(OptionalJwtAuthGuard)
+  getCharacterById(
+    @Req() request: Request,
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<Character> {
+    return this.charactersService.getCharacterById(id, request.user?.userId);
   }
 
   @UseGuards(JwtAuthGuard, AdminGuard)
