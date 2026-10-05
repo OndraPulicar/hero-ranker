@@ -111,7 +111,7 @@ export default function Character() {
                   <span className="text-xs text-gray-400 leading-none">▼</span>
                 </div>
 
-                <div className="h-2 w-full rounded-full bg-gradient-to-r from-blue-500 via-rose-300 to-red-600" />
+                <div className="h-2 w-full rounded-full bg-gradient-to-r from-good via-rose-300 to-evil" />
               </div>
 
               <div className="flex justify-between text-[11px] font-bold tracking-wider text-gray-400">
@@ -129,8 +129,8 @@ export default function Character() {
                 className={`${
                   character.vote
                     ? character.vote.isEvil
-                      ? 'bg-red-600'
-                      : 'bg-blue-500'
+                      ? 'bg-evil'
+                      : 'bg-good'
                     : 'bg-gray-800/80'
                 } group flex flex-col items-center justify-center gap-1 rounded-2xl p-3.5 text-gray-200 transition-all hover:scale-105 active:scale-95 cursor-pointer`}
               >
