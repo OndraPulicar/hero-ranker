@@ -1,13 +1,13 @@
 'use client';
 
 import { API_URL } from '@/config';
-import { UserInfoSchema } from '@hero-ranker/shared/schemas/user';
+import { UserInfo, UserInfoSchema } from '@hero-ranker/shared/schemas/user';
 import Link from 'next/link';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 export default function Header() {
   const queryClient = useQueryClient();
-  const { data: userInfo } = useQuery({
+  const { data: userInfo } = useQuery<UserInfo | null>({
     queryKey: ['me'],
     queryFn: async () => {
       const response = await fetch(`${API_URL}/auth/me`, {
@@ -15,7 +15,7 @@ export default function Header() {
       });
 
       if (response.status === 401) {
-        return undefined;
+        return null;
       }
 
       const responseJson = (await response.json()) as unknown;
