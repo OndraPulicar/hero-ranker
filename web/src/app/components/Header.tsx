@@ -3,9 +3,10 @@
 import { API_URL } from '@/config';
 import { UserInfoSchema } from '@hero-ranker/shared/schemas/user';
 import Link from 'next/link';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 export default function Header() {
+  const queryClient = useQueryClient();
   const { data: userInfo } = useQuery({
     queryKey: ['me'],
     queryFn: async () => {
@@ -22,6 +23,14 @@ export default function Header() {
       return UserInfoSchema.parse(responseJson);
     },
   });
+
+  const handleLogOutOnClick = async () => {
+    await fetch(`${API_URL}/auth/logout`, {
+      method: 'POST',
+      credentials: 'include',
+    });
+    await queryClient.invalidateQueries({ queryKey: ['me'] });
+  };
 
   return (
     <header className="flex items-center justify-between px-6 py-4 bg-muted text-background">
@@ -44,7 +53,15 @@ export default function Header() {
       <section>
         {userInfo && (
           <span>
-            {userInfo.username} ({userInfo.email})
+            {userInfo.username} ({userInfo.email}){' '}
+            <button
+              onClick={() => {
+                void handleLogOutOnClick();
+              }}
+              className="underline text-primary cursor-pointer"
+            >
+              log out
+            </button>
           </span>
         )}
         {!userInfo && <Link href="/login">log in</Link>}

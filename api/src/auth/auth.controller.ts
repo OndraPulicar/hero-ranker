@@ -40,4 +40,10 @@ export class AuthController {
   getMe(@Req() req: Request) {
     return this.authService.getMe(req.user!.userId);
   }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('logout')
+  logout(@Res({ passthrough: true }) response: Response) {
+    response.clearCookie('accessToken');
+  }
 }
