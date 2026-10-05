@@ -44,7 +44,7 @@ export default function CharacterRatingModal({
             <div className="flex gap-4">
               <button
                 className={`flex-1 p-2 border-1 border-black rounded-xl shadow-xl ${
-                  isEvil === true
+                  isEvil === false
                     ? 'border-red-500 bg-red-500 text-white'
                     : 'border-gray-300 bg-white'
                 }`}
@@ -56,7 +56,7 @@ export default function CharacterRatingModal({
               </button>
               <button
                 className={`flex-1 p-2 border-1 border-black rounded-xl shadow-xl ${
-                  isEvil === false
+                  isEvil === true
                     ? 'border-red-500 bg-red-500 text-white'
                     : 'border-gray-300 bg-white'
                 }`}
