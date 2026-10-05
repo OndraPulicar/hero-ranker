@@ -5,6 +5,7 @@ import { LoginErrorSchema } from '@hero-ranker/shared/schemas/auth';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
+import { useQueryClient } from '@tanstack/react-query';
 
 type LoginFormData = {
   email: string;
@@ -32,10 +33,12 @@ export default function Login() {
   const { register, handleSubmit } = useForm<LoginFormData>();
   const [error, setError] = useState<string | undefined>();
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   const onSubmit = async (data: LoginFormData) => {
     try {
       await logIn(data);
+      await queryClient.invalidateQueries({ queryKey: ['me'] });
       setError(undefined);
       router.push('/');
     } catch (error) {
