@@ -6,9 +6,9 @@ import { Request } from 'express';
 export class OptionalJwtAuthGuard extends AuthGuard('jwt') {
   canActivate(context: ExecutionContext) {
     const request = context.switchToHttp().getRequest<Request>();
-    const authHeader = request.headers.authorization;
+    const accessToken: unknown = request.cookies?.accessToken;
 
-    if (!authHeader) {
+    if (typeof accessToken !== 'string' || !accessToken) {
       return true;
     }
 
