@@ -4,9 +4,11 @@ import { API_URL } from '@/config';
 import { UserInfo, UserInfoSchema } from '@hero-ranker/shared/schemas/user';
 import Link from 'next/link';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useRouter } from 'next/navigation';
 
 export default function Header() {
   const queryClient = useQueryClient();
+  const router = useRouter();
   const { data: userInfo } = useQuery<UserInfo | null>({
     queryKey: ['me'],
     queryFn: async () => {
@@ -30,6 +32,7 @@ export default function Header() {
       credentials: 'include',
     });
     await queryClient.invalidateQueries({ queryKey: ['me'] });
+    router.push('/login');
   };
 
   return (
