@@ -1,11 +1,31 @@
+'use client';
+
 import { API_URL } from '@/config';
 import Card from './components/Card';
 import { getImageUrl } from '@/common';
 import { HomeDataSchema } from '@hero-ranker/shared/schemas/home';
+import { useQuery } from '@tanstack/react-query';
 
-export default async function Home() {
-  const response = await fetch(`${API_URL}/home`);
-  const homeData = HomeDataSchema.parse(await response.json());
+export default function Home() {
+  const {
+    data: homeData,
+    error,
+    isPending,
+  } = useQuery({
+    queryKey: ['home'],
+    queryFn: async () => {
+      const response = await fetch(`${API_URL}/home`);
+      return HomeDataSchema.parse(await response.json());
+    },
+  });
+
+  if (isPending) {
+    return <p className="p-6 text-center text-gray-300">Loading data...</p>;
+  }
+
+  if (error) {
+    return <p className="p-6 text-center text-red-400">Failed to load data.</p>;
+  }
 
   return (
     <main className="w-full px-6 py-10">
