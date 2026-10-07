@@ -1,11 +1,10 @@
 'use client';
 
-import { API_URL } from '@/config';
 import Card from './components/Card';
 import { getImageUrl } from '@/common';
-import { HomeDataSchema } from '@hero-ranker/shared/schemas/home';
 import { useQuery } from '@tanstack/react-query';
 import Status from './components/Status';
+import { getHomeData } from '@/services/home.service';
 
 export default function Home() {
   const {
@@ -14,10 +13,7 @@ export default function Home() {
     isPending,
   } = useQuery({
     queryKey: ['home'],
-    queryFn: async () => {
-      const response = await fetch(`${API_URL}/home`);
-      return HomeDataSchema.parse(await response.json());
-    },
+    queryFn: getHomeData,
   });
 
   if (isPending) {
