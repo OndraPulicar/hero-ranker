@@ -5,28 +5,11 @@ import { LoginErrorSchema } from '@hero-ranker/shared/schemas/auth';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
-import { useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 type LoginFormData = {
   email: string;
   password: string;
-};
-
-const logIn = async (data: LoginFormData): Promise<void> => {
-  const response = await fetch(`${API_URL}/auth/login`, {
-    method: 'POST',
-    credentials: 'include',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(data),
-  });
-  const responseJson = (await response.json()) as unknown;
-
-  if (!response.ok) {
-    const errorResponse = LoginErrorSchema.parse(responseJson);
-    throw new Error(errorResponse.message);
-  }
 };
 
 export default function Login() {
@@ -35,12 +18,33 @@ export default function Login() {
   const router = useRouter();
   const queryClient = useQueryClient();
 
-  const onSubmit = async (data: LoginFormData) => {
-    try {
-      await logIn(data);
+  const loginMutation = useMutation({
+    mutationFn: async (data: LoginFormData) => {
+      const response = await fetch(`${API_URL}/auth/login`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+      const responseJson = (await response.json()) as unknown;
+
+      if (!response.ok) {
+        const errorResponse = LoginErrorSchema.parse(responseJson);
+        throw new Error(errorResponse.message);
+      }
+    },
+    onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['me'] });
       setError(undefined);
       router.push('/');
+    },
+  });
+
+  const onSubmit = (data: LoginFormData) => {
+    try {
+      loginMutation.mutate(data);
     } catch (error) {
       if (error instanceof Error) {
         setError(error.message);
