@@ -18,6 +18,7 @@ import { useParams } from 'next/navigation';
 import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { VotePoints } from '@hero-ranker/shared/schemas/votes';
+import Status from '@/app/components/Status';
 
 export default function Character() {
   const params = useParams();
@@ -104,21 +105,15 @@ export default function Character() {
   });
 
   if (isPending) {
-    return (
-      <p className="p-6 text-center text-gray-300">Loading character...</p>
-    );
+    return <Status type="INFO">Loading character...</Status>;
   }
 
   if (error) {
-    return (
-      <p className="p-6 text-center text-red-400">Failed to load character.</p>
-    );
+    return <Status type="ERROR">Failed to load character.</Status>;
   }
 
   if (!character) {
-    return (
-      <p className="p-6 text-center text-gray-300">Character not found.</p>
-    );
+    return <Status type="INFO">Character not found.</Status>;
   }
 
   return (

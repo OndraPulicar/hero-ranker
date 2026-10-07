@@ -5,6 +5,7 @@ import Card from './components/Card';
 import { getImageUrl } from '@/common';
 import { HomeDataSchema } from '@hero-ranker/shared/schemas/home';
 import { useQuery } from '@tanstack/react-query';
+import Status from './components/Status';
 
 export default function Home() {
   const {
@@ -20,11 +21,11 @@ export default function Home() {
   });
 
   if (isPending) {
-    return <p className="p-6 text-center text-gray-300">Loading data...</p>;
+    return <Status type="INFO">Loading data...</Status>;
   }
 
   if (error) {
-    return <p className="p-6 text-center text-red-400">Failed to load data.</p>;
+    return <Status type="ERROR">Failed to load data.</Status>;
   }
 
   return (
