@@ -1,42 +1,20 @@
 'use client';
 
-import { API_URL } from '@/config';
-import { UserInfo, UserInfoSchema } from '@hero-ranker/shared/schemas/user';
 import Link from 'next/link';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
+import { getCurrentUser, logoutCurrentUser } from '@/services/auth.service';
 
 export default function Header() {
   const queryClient = useQueryClient();
   const router = useRouter();
-  const { data: userInfo } = useQuery<UserInfo | null>({
+  const { data: userInfo } = useQuery({
     queryKey: ['me'],
-    queryFn: async () => {
-      const response = await fetch(`${API_URL}/auth/me`, {
-        credentials: 'include',
-      });
-
-      if (response.status === 401) {
-        return null;
-      }
-
-      const responseJson = (await response.json()) as unknown;
-
-      return UserInfoSchema.parse(responseJson);
-    },
+    queryFn: getCurrentUser,
   });
 
   const logoutMutation = useMutation({
-    mutationFn: async () => {
-      const response = await fetch(`${API_URL}/auth/logout`, {
-        method: 'POST',
-        credentials: 'include',
-      });
-
-      if (!response.ok) {
-        throw new Error(`Logout failed.`);
-      }
-    },
+    mutationFn: logoutCurrentUser,
     onSuccess: async () => {
       await queryClient.setQueryData(['me'], null);
 
