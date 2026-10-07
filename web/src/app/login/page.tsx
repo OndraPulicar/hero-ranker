@@ -1,55 +1,31 @@
 'use client';
 
-import { API_URL } from '@/config';
-import { LoginErrorSchema } from '@hero-ranker/shared/schemas/auth';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-
-type LoginFormData = {
-  email: string;
-  password: string;
-};
+import { loginUser, LoginCredentials } from '@/services/auth.service';
 
 export default function Login() {
-  const { register, handleSubmit } = useForm<LoginFormData>();
+  const { register, handleSubmit } = useForm<LoginCredentials>();
   const [error, setError] = useState<string | undefined>();
   const router = useRouter();
   const queryClient = useQueryClient();
 
   const loginMutation = useMutation({
-    mutationFn: async (data: LoginFormData) => {
-      const response = await fetch(`${API_URL}/auth/login`, {
-        method: 'POST',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
-      const responseJson = (await response.json()) as unknown;
-
-      if (!response.ok) {
-        const errorResponse = LoginErrorSchema.parse(responseJson);
-        throw new Error(errorResponse.message);
-      }
-    },
+    mutationFn: loginUser,
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['me'] });
       setError(undefined);
       router.push('/');
     },
+    onError: (error) => {
+      setError(error instanceof Error ? error.message : 'Login failed.');
+    },
   });
 
-  const onSubmit = (data: LoginFormData) => {
-    try {
-      loginMutation.mutate(data);
-    } catch (error) {
-      if (error instanceof Error) {
-        setError(error.message);
-      }
-    }
+  const onSubmit = (data: LoginCredentials) => {
+    loginMutation.mutate(data);
   };
 
   return (
