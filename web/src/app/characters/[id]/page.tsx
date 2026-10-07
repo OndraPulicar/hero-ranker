@@ -1,24 +1,22 @@
 'use client';
 
-import Image from 'next/image';
-import {
-  PencilSparkles,
-  FaceNeutral,
-  ThumbsUp,
-  ThumbsDown,
-} from 'lucide-react';
-import { API_URL } from '@/config';
-import { getImageUrl } from '@/common';
-import {
-  Character as CharacterType,
-  CharacterSchema,
-} from '@hero-ranker/shared/schemas/character';
 import CharacterRatingModal from '@/app/components/CharacterRatingModal';
+import Status from '@/app/components/Status';
+import { getImageUrl } from '@/common';
+import { getCharacter } from '@/services/character.service';
+import { saveVote } from '@/services/vote.service';
+import { Character as CharacterType } from '@hero-ranker/shared/schemas/character';
+import { VotePoints } from '@hero-ranker/shared/schemas/votes';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import {
+  FaceNeutral,
+  PencilSparkles,
+  ThumbsDown,
+  ThumbsUp,
+} from 'lucide-react';
+import Image from 'next/image';
 import { useParams } from 'next/navigation';
 import { useState } from 'react';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { VotePoints } from '@hero-ranker/shared/schemas/votes';
-import Status from '@/app/components/Status';
 
 export default function Character() {
   const params = useParams();
@@ -33,23 +31,7 @@ export default function Character() {
     error,
   } = useQuery<CharacterType | null>({
     queryKey: ['character', id],
-    queryFn: async () => {
-      const response = await fetch(`${API_URL}/characters/${id}`, {
-        credentials: 'include',
-      });
-
-      if (response.status === 404) {
-        return null;
-      }
-
-      if (!response.ok) {
-        throw new Error(`Failed to load character (${response.status})`);
-      }
-
-      const responseJson = (await response.json()) as unknown;
-
-      return CharacterSchema.parse(responseJson);
-    },
+    queryFn: () => getCharacter(id),
   });
 
   const voteMutation = useMutation({
@@ -64,38 +46,7 @@ export default function Character() {
       isEvil: boolean;
       points: VotePoints;
     }) => {
-      const requestParams = {
-        credentials: 'include' as const,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      };
-      let response;
-
-      if (voteId !== undefined) {
-        response = await fetch(`${API_URL}/votes/${voteId}`, {
-          ...requestParams,
-          method: 'PATCH',
-          body: JSON.stringify({
-            points,
-            isEvil,
-          }),
-        });
-      } else {
-        response = await fetch(`${API_URL}/votes`, {
-          ...requestParams,
-          method: 'POST',
-          body: JSON.stringify({
-            characterId,
-            points,
-            isEvil,
-          }),
-        });
-      }
-
-      if (!response.ok) {
-        throw new Error(`Failed to save vote (${response.status})`);
-      }
+      await saveVote({ voteId, characterId, isEvil, points });
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries({
