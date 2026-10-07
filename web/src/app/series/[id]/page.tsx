@@ -3,8 +3,7 @@
 import Card from '@/app/components/Card';
 import Status from '@/app/components/Status';
 import { getImageUrl } from '@/common';
-import { API_URL } from '@/config';
-import { SeriesDetailSchema } from '@hero-ranker/shared/schemas/series';
+import { getSeries } from '@/services/series.service';
 import { useQuery } from '@tanstack/react-query';
 import Image from 'next/image';
 import { useParams } from 'next/navigation';
@@ -18,10 +17,7 @@ export default function Series() {
     error,
   } = useQuery({
     queryKey: ['series', params.id],
-    queryFn: async () => {
-      const response = await fetch(`${API_URL}/series/${params.id}`);
-      return SeriesDetailSchema.parse(await response.json());
-    },
+    queryFn: () => getSeries(params.id),
   });
 
   if (isPending) {
@@ -30,6 +26,10 @@ export default function Series() {
 
   if (error) {
     return <Status type="ERROR">Error while loading series.</Status>;
+  }
+
+  if (!series) {
+    return <Status type="INFO">Series not found.</Status>;
   }
 
   return (
