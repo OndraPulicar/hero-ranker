@@ -29,7 +29,9 @@ export default function Header() {
   return (
     <header className="flex items-center justify-between px-6 py-4 bg-muted text-background">
       <section className="">
-        <span className="text-xl font-bold text-background">HeroRanker</span>
+        <Link className="text-xl font-bold text-background" href="/">
+          HeroRanker
+        </Link>
       </section>
       <section className="flex gap-2">
         <input
