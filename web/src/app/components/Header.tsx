@@ -3,7 +3,7 @@
 import { API_URL } from '@/config';
 import { UserInfo, UserInfoSchema } from '@hero-ranker/shared/schemas/user';
 import Link from 'next/link';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 
 export default function Header() {
@@ -26,13 +26,26 @@ export default function Header() {
     },
   });
 
-  const handleLogOutOnClick = async () => {
-    await fetch(`${API_URL}/auth/logout`, {
-      method: 'POST',
-      credentials: 'include',
-    });
-    await queryClient.invalidateQueries({ queryKey: ['me'] });
-    router.push('/login');
+  const logoutMutation = useMutation({
+    mutationFn: async () => {
+      const response = await fetch(`${API_URL}/auth/logout`, {
+        method: 'POST',
+        credentials: 'include',
+      });
+
+      if (!response.ok) {
+        throw new Error(`Logout failed.`);
+      }
+    },
+    onSuccess: async () => {
+      await queryClient.setQueryData(['me'], null);
+
+      router.push('/login');
+    },
+  });
+
+  const handleLogOutOnClick = () => {
+    logoutMutation.mutate();
   };
 
   return (
