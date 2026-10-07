@@ -1,18 +1,36 @@
+'use client';
+
 import Card from '@/app/components/Card';
+import Status from '@/app/components/Status';
 import { getImageUrl } from '@/common';
 import { API_URL } from '@/config';
 import { SeriesDetailSchema } from '@hero-ranker/shared/schemas/series';
+import { useQuery } from '@tanstack/react-query';
 import Image from 'next/image';
+import { useParams } from 'next/navigation';
 
-export default async function Series({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
-  const { id } = await params;
+export default function Series() {
+  const params = useParams<{ id: string }>();
 
-  const response = await fetch(`${API_URL}/series/${id}`);
-  const series = SeriesDetailSchema.parse(await response.json());
+  const {
+    data: series,
+    isPending,
+    error,
+  } = useQuery({
+    queryKey: ['series', params.id],
+    queryFn: async () => {
+      const response = await fetch(`${API_URL}/series/${params.id}`);
+      return SeriesDetailSchema.parse(await response.json());
+    },
+  });
+
+  if (isPending) {
+    return <Status type="INFO">Loading series...</Status>;
+  }
+
+  if (error) {
+    return <Status type="ERROR">Error while loading series.</Status>;
+  }
 
   return (
     <div className="flex flex-col gap-4 w-full mx-auto max-w-7xl px-6 py-10">
