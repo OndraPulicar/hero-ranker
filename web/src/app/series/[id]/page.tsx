@@ -33,7 +33,7 @@ export default function Series() {
   }
 
   return (
-    <div className="flex flex-col gap-4 w-full mx-auto max-w-7xl px-6 py-10">
+    <div className="flex flex-col gap-4 w-full mx-auto max-w-3xl px-6 py-10">
       <section className="">
         <h1 className="text-2xl font-bold mb-2">{series.title}</h1>
         <h2 className="text-lg font-bold mb-2">{series.yearOfProduction}</h2>
@@ -57,7 +57,7 @@ export default function Series() {
       </section>
       <section>
         <h3 className="text-lg font-bold mb-2">Characters</h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4">
           {series.characters.map(
             (character: {
               id: number;
