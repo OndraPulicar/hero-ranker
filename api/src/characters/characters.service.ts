@@ -47,7 +47,31 @@ export class CharactersService {
         })
       : null;
 
-    return { ...character, vote: vote ? VoteSchema.parse(vote) : null };
+    const result = await this.prismaService.$queryRaw<{ rank: number }[]>`
+      SELECT ranked."rank"::int AS rank
+      FROM (
+        SELECT
+          id,
+          DENSE_RANK() OVER (
+            ORDER BY
+              CASE
+                WHEN "totalVotes" > 0
+                THEN "points"::numeric / "totalVotes"
+                ELSE 0
+              END DESC
+          ) AS "rank"
+        FROM "Character"
+      ) AS ranked
+      WHERE ranked.id = ${id}
+    `;
+
+    const rank = result[0]?.rank ?? null;
+
+    return {
+      ...character,
+      vote: vote ? VoteSchema.parse(vote) : null,
+      rank,
+    };
   }
 
   async createCharacter(dto: CreateCharacterDto, file?: Express.Multer.File) {

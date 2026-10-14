@@ -18,7 +18,10 @@ import { CharactersService } from './characters.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { CreateCharacterDto } from './dto/create-character.dto';
 import { UpdateCharacterDto } from './dto/update-character.dto';
-import { Character } from '@hero-ranker/shared/schemas/character';
+import {
+  Character,
+  CharacterDetail,
+} from '@hero-ranker/shared/schemas/character';
 import { AdminGuard } from 'src/auth/admin.guard';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { OptionalJwtAuthGuard } from 'src/auth/optional-jwt-auth.guard';
@@ -38,7 +41,7 @@ export class CharactersController {
   getCharacterById(
     @Req() request: Request,
     @Param('id', ParseIntPipe) id: number,
-  ): Promise<Character> {
+  ): Promise<CharacterDetail> {
     return this.charactersService.getCharacterById(id, request.user?.userId);
   }
 

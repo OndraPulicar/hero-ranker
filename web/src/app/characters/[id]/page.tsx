@@ -5,7 +5,7 @@ import Status from '@/app/components/Status';
 import { getImageUrl } from '@/common';
 import { getCharacter } from '@/services/character.service';
 import { saveVote } from '@/services/vote.service';
-import { Character as CharacterType } from '@hero-ranker/shared/schemas/character';
+import { CharacterDetail } from '@hero-ranker/shared/schemas/character';
 import { VotePoints } from '@hero-ranker/shared/schemas/votes';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
@@ -29,7 +29,7 @@ export default function Character() {
     data: character,
     isPending,
     error,
-  } = useQuery<CharacterType | null>({
+  } = useQuery<CharacterDetail | null>({
     queryKey: ['character', id],
     queryFn: () => getCharacter(id),
   });
@@ -81,7 +81,7 @@ export default function Character() {
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-black/30" />
 
           <div className="absolute left-4 top-4 rounded-full bg-black/50 px-3 py-1 text-xs font-semibold backdrop-blur-md">
-            #175
+            #{character.rank}
           </div>
 
           <div className="absolute bottom-4 left-4 right-4">

@@ -11,7 +11,6 @@ export const CharacterSchema = z.object({
   evilVotes: z.number(),
   points: z.number(),
   imageKey: z.string().nullable(),
-  vote: VoteSchema.nullable().optional(),
 });
 
 export const CharacterCardSchema = CharacterSchema.pick({
@@ -21,5 +20,11 @@ export const CharacterCardSchema = CharacterSchema.pick({
   totalVotes: true,
 });
 
+export const CharacterDetailSchema = CharacterSchema.extend({
+  rank: z.number(),
+  vote: VoteSchema.nullable().optional(),
+});
+
 export type Character = z.infer<typeof CharacterSchema>;
 export type CharacterCard = z.infer<typeof CharacterCardSchema>;
+export type CharacterDetail = z.infer<typeof CharacterDetailSchema>;

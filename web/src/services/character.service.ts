@@ -1,5 +1,5 @@
 import { API_URL } from '@/config';
-import { CharacterSchema } from '@hero-ranker/shared/schemas/character';
+import { CharacterDetailSchema } from '@hero-ranker/shared/schemas/character';
 
 export const getCharacter = async (id: number) => {
   const response = await fetch(`${API_URL}/characters/${id}`, {
@@ -16,5 +16,5 @@ export const getCharacter = async (id: number) => {
 
   const responseJson = (await response.json()) as unknown;
 
-  return CharacterSchema.parse(responseJson);
+  return CharacterDetailSchema.parse(responseJson);
 };
