@@ -39,7 +39,7 @@ export default function Header() {
       <section>
         {userInfo && (
           <span>
-            {userInfo.username} ({userInfo.email})
+            {userInfo.username} ({userInfo.email})&nbsp;
             <button
               onClick={() => {
                 void handleLogOutOnClick();
