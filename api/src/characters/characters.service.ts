@@ -47,25 +47,7 @@ export class CharactersService {
         })
       : null;
 
-    const result = await this.prismaService.$queryRaw<{ rank: number }[]>`
-      SELECT ranked."rank"::int AS rank
-      FROM (
-        SELECT
-          id,
-          DENSE_RANK() OVER (
-            ORDER BY
-              CASE
-                WHEN "totalVotes" > 0
-                THEN "points"::numeric / "totalVotes"
-                ELSE 0
-              END DESC
-          ) AS "rank"
-        FROM "Character"
-      ) AS ranked
-      WHERE ranked.id = ${id}
-    `;
-
-    const rank = result[0]?.rank ?? null;
+    const rank = await this.getCharacterRank(id);
 
     return {
       ...character,
@@ -103,6 +85,28 @@ export class CharactersService {
     }
 
     return character;
+  }
+
+  private async getCharacterRank(characterId: number) {
+    const result = await this.prismaService.$queryRaw<{ rank: number }[]>`
+      SELECT ranked."rank"::int AS rank
+      FROM (
+        SELECT
+          id,
+          DENSE_RANK() OVER (
+            ORDER BY
+              CASE
+                WHEN "totalVotes" > 0
+                THEN "points"::numeric / "totalVotes"
+                ELSE 0
+              END DESC
+          ) AS "rank"
+        FROM "Character"
+      ) AS ranked
+      WHERE ranked.id = ${characterId}
+    `;
+
+    return result[0]?.rank ?? null;
   }
 
   async updateCharacter(
