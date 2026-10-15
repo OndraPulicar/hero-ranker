@@ -7,12 +7,14 @@ import { CreateCharacterDto } from './dto/create-character.dto';
 import { StorageService } from 'src/storage/storage.service';
 import { Character } from '@hero-ranker/shared/schemas/character';
 import { VoteSchema } from '@hero-ranker/shared/schemas/votes';
+import { AiService } from 'src/ai/ai.service';
 
 @Injectable()
 export class CharactersService {
   constructor(
     private readonly prismaService: PrismaService,
     private readonly storageService: StorageService,
+    private readonly aiService: AiService,
   ) {}
 
   getCharacters(query: GetCharactersDto) {
@@ -47,25 +49,7 @@ export class CharactersService {
         })
       : null;
 
-    const result = await this.prismaService.$queryRaw<{ rank: number }[]>`
-      SELECT ranked."rank"::int AS rank
-      FROM (
-        SELECT
-          id,
-          DENSE_RANK() OVER (
-            ORDER BY
-              CASE
-                WHEN "totalVotes" > 0
-                THEN "points"::numeric / "totalVotes"
-                ELSE 0
-              END DESC
-          ) AS "rank"
-        FROM "Character"
-      ) AS ranked
-      WHERE ranked.id = ${id}
-    `;
-
-    const rank = result[0]?.rank ?? null;
+    const rank = await this.getCharacterRank(id);
 
     return {
       ...character,
@@ -103,6 +87,28 @@ export class CharactersService {
     }
 
     return character;
+  }
+
+  private async getCharacterRank(characterId: number) {
+    const result = await this.prismaService.$queryRaw<{ rank: number }[]>`
+      SELECT ranked."rank"::int AS rank
+      FROM (
+        SELECT
+          id,
+          DENSE_RANK() OVER (
+            ORDER BY
+              CASE
+                WHEN "totalVotes" > 0
+                THEN "points"::numeric / "totalVotes"
+                ELSE 0
+              END DESC
+          ) AS "rank"
+        FROM "Character"
+      ) AS ranked
+      WHERE ranked.id = ${characterId}
+    `;
+
+    return result[0]?.rank ?? null;
   }
 
   async updateCharacter(
@@ -162,6 +168,67 @@ export class CharactersService {
 
   async deleteCharacter(id: number) {
     return this.prismaService.character.delete({ where: { id } });
+  }
+
+  async updateCharacterVoteStats(
+    tx: Prisma.TransactionClient,
+    characterId: number,
+    delta: {
+      totalVotes?: number;
+      evilVotes?: number;
+      points?: number;
+    },
+  ) {
+    await tx.character.update({
+      where: { id: characterId },
+      data: {
+        ...(delta.totalVotes !== undefined && {
+          totalVotes: { increment: delta.totalVotes },
+        }),
+        ...(delta.evilVotes !== undefined && {
+          evilVotes: { increment: delta.evilVotes },
+        }),
+        ...(delta.points !== undefined && {
+          points: { increment: delta.points },
+        }),
+      },
+    });
+  }
+
+  async updateCharacterRatingInfo(id: number): Promise<void> {
+    const character = await this.prismaService.character.findUnique({
+      where: { id },
+      select: { name: true, totalVotes: true, points: true, evilVotes: true },
+    });
+
+    if (character === null) {
+      throw new NotFoundException('Character was not found.');
+    }
+
+    const ratingInfo = await this.aiService.getRanking(
+      character.name,
+      character.totalVotes,
+      character.points,
+      character.evilVotes,
+    );
+
+    console.log(
+      'New rating info',
+      {
+        name: character.name,
+        totalVotes: character.totalVotes,
+        points: character.points,
+        evilVoteS: character.evilVotes,
+      },
+      ratingInfo,
+    );
+
+    await this.prismaService.character.update({
+      where: { id },
+      data: {
+        ratingInfo,
+      },
+    });
   }
 
   private readonly logger = new Logger(CharactersService.name);

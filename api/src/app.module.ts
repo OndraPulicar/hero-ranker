@@ -8,6 +8,7 @@ import { VotesModule } from './votes/votes.module';
 import { HomeModule } from './home/home.module';
 import { AuthModule } from './auth/auth.module';
 import { SearchModule } from './search/search.module';
+import { AiModule } from './ai/ai.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { SearchModule } from './search/search.module';
     HomeModule,
     AuthModule,
     SearchModule,
+    AiModule,
   ],
   controllers: [AppController],
   providers: [AppService],

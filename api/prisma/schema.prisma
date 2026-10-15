@@ -59,6 +59,7 @@ model Character {
   points                Int       @default(0)
   imageKey              String?
   createdAt             DateTime  @default(now())
+  ratingInfo            String    @default("")
 
   series Series @relation(fields: [seriesId], references: [id])
   seasons               Season[]
