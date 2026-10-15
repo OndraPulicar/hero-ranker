@@ -168,5 +168,30 @@ export class CharactersService {
     return this.prismaService.character.delete({ where: { id } });
   }
 
+  async updateCharacterVoteStats(
+    tx: Prisma.TransactionClient,
+    characterId: number,
+    delta: {
+      totalVotes?: number;
+      evilVotes?: number;
+      points?: number;
+    },
+  ) {
+    await tx.character.update({
+      where: { id: characterId },
+      data: {
+        ...(delta.totalVotes !== undefined && {
+          totalVotes: { increment: delta.totalVotes },
+        }),
+        ...(delta.evilVotes !== undefined && {
+          evilVotes: { increment: delta.evilVotes },
+        }),
+        ...(delta.points !== undefined && {
+          points: { increment: delta.points },
+        }),
+      },
+    });
+  }
+
   private readonly logger = new Logger(CharactersService.name);
 }

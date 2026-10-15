@@ -9,10 +9,14 @@ import { GetVotesDto } from './dto/get-votes.dto';
 import { UpdateVoteDto } from './dto/update-vote.dto';
 import { Vote, VoteSchema } from '@hero-ranker/shared/schemas/votes';
 import { CreateVoteData } from './types/create-vote-data';
+import { CharactersService } from 'src/characters/characters.service';
 
 @Injectable()
 export class VotesService {
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(
+    private readonly prismaService: PrismaService,
+    private readonly characterService: CharactersService,
+  ) {}
 
   async createVote(createVoteData: CreateVoteData) {
     return this.prismaService.$transaction(async (tx) => {
@@ -20,24 +24,15 @@ export class VotesService {
         data: createVoteData,
       });
 
-      await tx.character.update({
-        where: {
-          id: createVoteData.characterId,
+      await this.characterService.updateCharacterVoteStats(
+        tx,
+        createVoteData.characterId,
+        {
+          totalVotes: 1,
+          evilVotes: createVoteData.isEvil ? 1 : undefined,
+          points: createVoteData.points,
         },
-        data: {
-          totalVotes: {
-            increment: 1,
-          },
-          ...(createVoteData.isEvil && {
-            evilVotes: {
-              increment: 1,
-            },
-          }),
-          points: {
-            increment: createVoteData.points,
-          },
-        },
-      });
+      );
 
       return VoteSchema.parse(createdVote);
     });
@@ -90,17 +85,14 @@ export class VotesService {
       });
 
       if (evilVotesDelta !== 0 || pointsDelta !== 0) {
-        await tx.character.update({
-          where: { id: currentVote.characterId },
-          data: {
-            ...(evilVotesDelta !== 0 && {
-              evilVotes: { increment: evilVotesDelta },
-            }),
-            ...(pointsDelta !== 0 && {
-              points: { increment: pointsDelta },
-            }),
+        await this.characterService.updateCharacterVoteStats(
+          tx,
+          currentVote.characterId,
+          {
+            evilVotes: evilVotesDelta !== 0 ? evilVotesDelta : undefined,
+            points: pointsDelta !== 0 ? pointsDelta : undefined,
           },
-        });
+        );
       }
 
       return VoteSchema.parse(updatedVote);
@@ -115,16 +107,15 @@ export class VotesService {
         throw new ForbiddenException();
       }
 
-      await tx.character.update({
-        where: { id: currentVote.characterId },
-        data: {
-          totalVotes: { decrement: 1 },
-          ...(currentVote.isEvil && {
-            evilVotes: { decrement: 1 },
-          }),
-          points: { decrement: currentVote.points },
+      await this.characterService.updateCharacterVoteStats(
+        tx,
+        currentVote.characterId,
+        {
+          totalVotes: -1,
+          evilVotes: currentVote.isEvil ? -1 : undefined,
+          points: -currentVote.points,
         },
-      });
+      );
 
       return VoteSchema.parse(await tx.vote.delete({ where: { id } }));
     });
@@ -148,8 +139,6 @@ export class VotesService {
     if (!currentVote) {
       throw new NotFoundException(`Vote with id ${id} not found`);
     }
-
-    console.log('updated vote in getCurrentVoteOrThrowError: ', currentVote);
 
     return VoteSchema.parse(currentVote);
   }
