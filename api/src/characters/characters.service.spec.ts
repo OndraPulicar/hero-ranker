@@ -14,6 +14,7 @@ describe('CharactersService', () => {
     vote: {
       findUnique: jest.fn(),
     },
+    $queryRaw: jest.fn(),
   };
   let service: CharactersService;
 
@@ -58,9 +59,11 @@ describe('CharactersService', () => {
       };
       prismaService.character.findUnique.mockResolvedValue(character);
       prismaService.vote.findUnique.mockResolvedValue(vote);
+      prismaService.$queryRaw.mockResolvedValue([{ rank: 1 }]);
 
       await expect(service.getCharacterById(1, 7)).resolves.toEqual({
         ...character,
+        rank: 1,
         vote: {
           id: 3,
           characterId: 1,
@@ -76,14 +79,17 @@ describe('CharactersService', () => {
       expect(prismaService.vote.findUnique).toHaveBeenCalledWith({
         where: { characterId_userId: { characterId: 1, userId: 7 } },
       });
+      expect(prismaService.$queryRaw).toHaveBeenCalled();
     });
 
     it('returns a null vote for guests', async () => {
       const character = { id: 1, name: 'Hero' };
       prismaService.character.findUnique.mockResolvedValue(character);
+      prismaService.$queryRaw.mockResolvedValue([{ rank: 1 }]);
 
       await expect(service.getCharacterById(1)).resolves.toEqual({
         ...character,
+        rank: 1,
         vote: null,
       });
       expect(prismaService.vote.findUnique).not.toHaveBeenCalled();
