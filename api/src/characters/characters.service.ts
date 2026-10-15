@@ -7,12 +7,14 @@ import { CreateCharacterDto } from './dto/create-character.dto';
 import { StorageService } from 'src/storage/storage.service';
 import { Character } from '@hero-ranker/shared/schemas/character';
 import { VoteSchema } from '@hero-ranker/shared/schemas/votes';
+import { AiService } from 'src/ai/ai.service';
 
 @Injectable()
 export class CharactersService {
   constructor(
     private readonly prismaService: PrismaService,
     private readonly storageService: StorageService,
+    private readonly aiService: AiService,
   ) {}
 
   getCharacters(query: GetCharactersDto) {
@@ -189,6 +191,42 @@ export class CharactersService {
         ...(delta.points !== undefined && {
           points: { increment: delta.points },
         }),
+      },
+    });
+  }
+
+  async updateCharacterRatingInfo(id: number): Promise<void> {
+    const character = await this.prismaService.character.findUnique({
+      where: { id },
+      select: { name: true, totalVotes: true, points: true, evilVotes: true },
+    });
+
+    if (character === null) {
+      throw new NotFoundException('Character was not found.');
+    }
+
+    const ratingInfo = await this.aiService.getRanking(
+      character.name,
+      character.totalVotes,
+      character.points,
+      character.evilVotes,
+    );
+
+    console.log(
+      'New rating info',
+      {
+        name: character.name,
+        totalVotes: character.totalVotes,
+        points: character.points,
+        evilVoteS: character.evilVotes,
+      },
+      ratingInfo,
+    );
+
+    await this.prismaService.character.update({
+      where: { id },
+      data: {
+        ratingInfo,
       },
     });
   }

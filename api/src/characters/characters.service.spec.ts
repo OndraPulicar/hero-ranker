@@ -19,7 +19,11 @@ describe('CharactersService', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    service = new CharactersService(prismaService as never, {} as never);
+    service = new CharactersService(
+      prismaService as never,
+      {} as never,
+      {} as never,
+    );
   });
 
   describe('getCharacters', () => {

@@ -19,7 +19,7 @@ export class VotesService {
   ) {}
 
   async createVote(createVoteData: CreateVoteData) {
-    return this.prismaService.$transaction(async (tx) => {
+    const result = await this.prismaService.$transaction(async (tx) => {
       const createdVote = await tx.vote.create({
         data: createVoteData,
       });
@@ -36,6 +36,10 @@ export class VotesService {
 
       return VoteSchema.parse(createdVote);
     });
+
+    void this.characterService.updateCharacterRatingInfo(result.characterId);
+
+    return result;
   }
 
   async getVotes(query: GetVotesDto) {
@@ -64,7 +68,7 @@ export class VotesService {
   }
 
   async updateVote(id: number, updateVoteDto: UpdateVoteDto, userId: number) {
-    return this.prismaService.$transaction(async (tx) => {
+    const result = await this.prismaService.$transaction(async (tx) => {
       const currentVote = await this.getCurrentVoteOrThrowError(tx, id);
 
       if (currentVote.userId !== userId) {
@@ -97,10 +101,14 @@ export class VotesService {
 
       return VoteSchema.parse(updatedVote);
     });
+
+    void this.characterService.updateCharacterRatingInfo(result.characterId);
+
+    return result;
   }
 
   async deleteVote(id: number, userId: number) {
-    return this.prismaService.$transaction(async (tx) => {
+    const result = await this.prismaService.$transaction(async (tx) => {
       const currentVote = await this.getCurrentVoteOrThrowError(tx, id);
 
       if (currentVote.userId !== userId) {
@@ -119,6 +127,10 @@ export class VotesService {
 
       return VoteSchema.parse(await tx.vote.delete({ where: { id } }));
     });
+
+    void this.characterService.updateCharacterRatingInfo(result.characterId);
+
+    return result;
   }
 
   private async getCurrentVoteOrThrowError(

@@ -103,7 +103,7 @@ export default function Character() {
               <p className="mt-1 text-base font-medium text-gray-300">
                 {character.totalVotes === 0
                   ? 'Nobody has voted yet, be the first!'
-                  : 'Exceptional standing'}
+                  : character.ratingInfo}
               </p>
             </div>
 
