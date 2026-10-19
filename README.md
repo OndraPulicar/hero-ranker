@@ -1,15 +1,14 @@
-
 # Hero Ranker
 
 Web application for rating fictional characters from TV series.
 
 ## Tech Stack
 
-Frontend: Next.js + TypeScript
-Backend: NestJS + TypeScript
+Frontend: Next.js, Tailwind CSS
+Backend: NestJS
 Database: PostgreSQL
 ORM: Prisma
-Infrastructure: Docker Compose
+Infrastructure: Docker
 
 ## Requirements
 
