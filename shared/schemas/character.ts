@@ -21,7 +21,7 @@ export const CharacterCardSchema = CharacterSchema.pick({
 });
 
 export const CharacterDetailSchema = CharacterSchema.extend({
-  rank: z.number(),
+  rank: z.number().nullable(),
   vote: VoteSchema.nullable().optional(),
   ratingInfo: z.string(),
 });

@@ -5,7 +5,11 @@ import { UpdateCharacterDto } from './dto/update-character.dto';
 import { Prisma } from 'generated/prisma/client';
 import { CreateCharacterDto } from './dto/create-character.dto';
 import { StorageService } from 'src/storage/storage.service';
-import { Character } from '@hero-ranker/shared/schemas/character';
+import {
+  Character,
+  CharacterDetailSchema,
+  CharacterSchema,
+} from '@hero-ranker/shared/schemas/character';
 import { VoteSchema } from '@hero-ranker/shared/schemas/votes';
 import { AiService } from 'src/ai/ai.service';
 
@@ -17,8 +21,8 @@ export class CharactersService {
     private readonly aiService: AiService,
   ) {}
 
-  getCharacters(query: GetCharactersDto) {
-    return this.prismaService.character.findMany({
+  async getCharacters(query: GetCharactersDto) {
+    const characters = await this.prismaService.character.findMany({
       where: {
         name: query.name
           ? { contains: query.name, mode: 'insensitive' }
@@ -28,15 +32,13 @@ export class CharactersService {
       orderBy: { name: 'asc' },
       take: query.limit,
     });
+
+    return CharacterSchema.array().parse(characters);
   }
 
   async getCharacterById(id: number, userId?: number) {
     const character = await this.prismaService.character.findUnique({
       where: { id },
-      include: {
-        series: true,
-        seasons: true,
-      },
     });
 
     if (!character) {
@@ -51,11 +53,11 @@ export class CharactersService {
 
     const rank = await this.getCharacterRank(id);
 
-    return {
+    return CharacterDetailSchema.parse({
       ...character,
       vote: vote ? VoteSchema.parse(vote) : null,
       rank,
-    };
+    });
   }
 
   async createCharacter(dto: CreateCharacterDto, file?: Express.Multer.File) {
@@ -77,16 +79,18 @@ export class CharactersService {
 
       try {
         await this.storageService.upload(file.buffer, imageKey, file.mimetype);
-        return this.prismaService.character.update({
-          where: { id: character.id },
-          data: { imageKey },
-        });
+        return CharacterSchema.parse(
+          await this.prismaService.character.update({
+            where: { id: character.id },
+            data: { imageKey },
+          }),
+        );
       } catch (error) {
         this.logger.error(`Failed to upload image for the character`, error);
       }
     }
 
-    return character;
+    return CharacterSchema.parse(character);
   }
 
   private async getCharacterRank(characterId: number) {
@@ -153,21 +157,25 @@ export class CharactersService {
 
     try {
       await this.storageService.upload(file.buffer, imageKey, file.mimetype);
-      return this.prismaService.character.update({
-        where: { id: character.id },
-        data: { imageKey },
-      });
+      return CharacterSchema.parse(
+        await this.prismaService.character.update({
+          where: { id: character.id },
+          data: { imageKey },
+        }),
+      );
     } catch (error) {
       this.logger.error(
         `Failed to upload image for character ${character.id}`,
         error,
       );
-      return character;
+      return CharacterSchema.parse(character);
     }
   }
 
   async deleteCharacter(id: number) {
-    return this.prismaService.character.delete({ where: { id } });
+    return CharacterSchema.parse(
+      await this.prismaService.character.delete({ where: { id } }),
+    );
   }
 
   async updateCharacterVoteStats(

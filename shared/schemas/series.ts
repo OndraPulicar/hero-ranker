@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { CharacterSchema } from './character';
 import { SeasonSchema } from './season';
 
 export const SeriesSchema = z.object({
@@ -16,7 +17,11 @@ export const SeriesWithVotesSchema = SeriesSchema.extend({
 });
 
 export const SeriesDetailSchema = SeriesSchema.extend({
-  seasons: z.array(SeasonSchema),
+  seasons: z.array(
+    SeasonSchema.extend({
+      characters: z.array(CharacterSchema),
+    }),
+  ),
 });
 
 export const SeriesCardSchema = SeriesSchema.pick({

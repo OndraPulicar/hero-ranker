@@ -3,6 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from 'src/prisma/prisma.service';
 import bcrypt from 'bcrypt';
 import { UserInfoSchema } from '@hero-ranker/shared/schemas/user';
+import { AuthTokenSchema } from '@hero-ranker/shared/schemas/auth';
 
 @Injectable()
 export class AuthService {
@@ -28,7 +29,7 @@ export class AuthService {
 
     const accessToken = await this.jwtService.signAsync({ sub: user.id });
 
-    return { accessToken };
+    return AuthTokenSchema.parse({ accessToken });
   }
 
   async getMe(userId: number) {

@@ -5,7 +5,12 @@ import { CreateSeriesDto } from './dto/create-series.dto';
 import { Prisma } from 'generated/prisma/client';
 import { StorageService } from 'src/storage/storage.service';
 import { UpdateSeriesDto } from './dto/update-series.dto';
-import { Series } from '@hero-ranker/shared/schemas/series';
+import {
+  Series,
+  SeriesDetailSchema,
+  SeriesSchema,
+} from '@hero-ranker/shared/schemas/series';
+import { CharacterSchema } from '@hero-ranker/shared/schemas/character';
 
 @Injectable()
 export class SeriesService {
@@ -15,9 +20,11 @@ export class SeriesService {
   ) {}
 
   getSeries() {
-    return this.prismaService.series.findMany({
-      take: 10,
-    });
+    return this.prismaService.series
+      .findMany({
+        take: 10,
+      })
+      .then((series) => SeriesSchema.array().parse(series));
   }
 
   async getSeriesById(id: number) {
@@ -38,7 +45,7 @@ export class SeriesService {
       throw new NotFoundException(`Series with id ${id} not found`);
     }
 
-    return series;
+    return SeriesDetailSchema.parse(series);
   }
 
   async getCharactersBySeriesId(id: number, query: GetCharactersBySeriesIdDto) {
@@ -55,13 +62,15 @@ export class SeriesService {
       throw new NotFoundException(`Series with id ${id} not found`);
     }
 
-    return this.prismaService.character.findMany({
+    const characters = await this.prismaService.character.findMany({
       where: {
         seriesId: id,
       },
       orderBy: query.sortBy ? { [query.sortBy]: 'asc' } : undefined,
       take: query.limit,
     });
+
+    return CharacterSchema.array().parse(characters);
   }
 
   async createSeries(dto: CreateSeriesDto, file?: Express.Multer.File) {
@@ -81,10 +90,12 @@ export class SeriesService {
     const series = await this.prismaService.series.create({ data });
 
     if (file) {
-      return this.uploadSeriesImageAndUpdate(series, file);
+      return SeriesSchema.parse(
+        await this.uploadSeriesImageAndUpdate(series, file),
+      );
     }
 
-    return series;
+    return SeriesSchema.parse(series);
   }
 
   async updateSeries(
@@ -98,10 +109,12 @@ export class SeriesService {
     });
 
     if (file) {
-      return this.uploadSeriesImageAndUpdate(series, file);
+      return SeriesSchema.parse(
+        await this.uploadSeriesImageAndUpdate(series, file),
+      );
     }
 
-    return series;
+    return SeriesSchema.parse(series);
   }
 
   private async uploadSeriesImageAndUpdate(
@@ -112,21 +125,25 @@ export class SeriesService {
 
     try {
       await this.storageService.upload(file.buffer, imageKey, file.mimetype);
-      return this.prismaService.series.update({
-        where: { id: series.id },
-        data: { imageKey },
-      });
+      return SeriesSchema.parse(
+        await this.prismaService.series.update({
+          where: { id: series.id },
+          data: { imageKey },
+        }),
+      );
     } catch (error) {
       this.logger.error(
         `Failed to upload image for series ${series.id}`,
         error,
       );
-      return series;
+      return SeriesSchema.parse(series);
     }
   }
 
   async deleteSeries(id: number) {
-    return this.prismaService.series.delete({ where: { id } });
+    return SeriesSchema.parse(
+      await this.prismaService.series.delete({ where: { id } }),
+    );
   }
 
   private readonly logger = new Logger(SeriesService.name);
