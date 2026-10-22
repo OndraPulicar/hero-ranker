@@ -1,10 +1,10 @@
-import { CharacterFilter } from '@/types/character';
+import { CharacterFilters as CharacterFilterType } from '@/types/character';
 import { Season } from '@hero-ranker/shared/schemas/season';
 import { ChevronDown } from 'lucide-react';
 
 type CharacterFiltersProps = {
-  filters: CharacterFilter;
-  setFilters: React.Dispatch<React.SetStateAction<CharacterFilter>>;
+  filters: CharacterFilterType;
+  setFilters: React.Dispatch<React.SetStateAction<CharacterFilterType>>;
   seasons: Season[];
 };
 
@@ -69,7 +69,7 @@ export default function CharacterFilters({
               onChange={(event) =>
                 setFilters((prev) => ({
                   ...prev,
-                  karma: event.target.value as CharacterFilter['karma'],
+                  karma: event.target.value as CharacterFilterType['karma'],
                 }))
               }
               className="w-full appearance-none rounded-lg border border-[#3b3e4b] bg-[#232631] px-3 py-2.5 text-sm text-white outline-none transition-colors hover:border-[#8d99ae] focus:border-[#D90429] focus:ring-2 focus:ring-[#D90429]/20"
@@ -100,7 +100,7 @@ export default function CharacterFilters({
               onChange={(event) =>
                 setFilters((prev) => ({
                   ...prev,
-                  sort: event.target.value as CharacterFilter['sort'],
+                  sort: event.target.value as CharacterFilterType['sort'],
                 }))
               }
               className="w-full appearance-none rounded-lg border border-[#3b3e4b] bg-[#232631] px-3 py-2.5 text-sm text-white outline-none transition-colors hover:border-[#8d99ae] focus:border-[#D90429] focus:ring-2 focus:ring-[#D90429]/20"
