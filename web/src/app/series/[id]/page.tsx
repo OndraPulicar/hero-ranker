@@ -56,7 +56,6 @@ export default function Series() {
         />
         <div className="max-w-xl text-justify">{series.description}</div>
       </section>
-      <h3 className="text-lg font-bold">Filters</h3>
       <CharacterFilters
         filters={filters}
         setFilters={setFilters}
