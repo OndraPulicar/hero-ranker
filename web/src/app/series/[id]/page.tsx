@@ -1,6 +1,5 @@
 'use client';
 
-import Card from '@/app/components/Card';
 import Status from '@/app/components/Status';
 import { getImageUrl } from '@/common';
 import { getSeries } from '@/services/series.service';
@@ -10,6 +9,7 @@ import { useParams } from 'next/navigation';
 import { useState } from 'react';
 import { CharacterFilters as CharacterFilterType } from '@/types/character';
 import CharacterFilters from '@/app/components/CharacterFilters';
+import Characters from '@/app/components/Characters';
 
 export default function Series() {
   const params = useParams<{ id: string }>();
@@ -61,30 +61,7 @@ export default function Series() {
         setFilters={setFilters}
         seasons={series.seasons}
       ></CharacterFilters>
-      <section>
-        <h3 className="text-lg font-bold mb-2">Characters</h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4">
-          {series.characters.map(
-            (character: {
-              id: number;
-              name: string;
-              imageKey: string | null;
-              totalVotes: number;
-            }) => (
-              <Card
-                key={character.id}
-                data={{
-                  id: character.id,
-                  resource: 'characters',
-                  title: character.name,
-                  imageUrl: getImageUrl(character.imageKey),
-                  totalVotes: character.totalVotes,
-                }}
-              />
-            ),
-          )}
-        </div>
-      </section>
+      <Characters seriesId={params.id} filters={filters}></Characters>
     </div>
   );
 }

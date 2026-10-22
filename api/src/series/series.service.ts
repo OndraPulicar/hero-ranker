@@ -26,7 +26,6 @@ export class SeriesService {
         id: id,
       },
       include: {
-        characters: true,
         seasons: {
           include: {
             characters: true,
