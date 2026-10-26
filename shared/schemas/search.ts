@@ -1,6 +1,6 @@
 import { z } from 'zod';
-import { CharacterSchema } from './character';
-import { SeriesSchema } from './series';
+import { CharacterSchema } from '@hero-ranker/shared/schemas/character';
+import { SeriesSchema } from '@hero-ranker/shared/schemas/series';
 
 export const SearchResultCharacterSchema = CharacterSchema.pick({
   id: true,

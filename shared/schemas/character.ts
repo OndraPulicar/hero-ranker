@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { VoteSchema } from './votes';
+import { VoteSchema } from '@hero-ranker/shared/schemas/votes';
 
 export const CharacterSchema = z.object({
   id: z.number(),

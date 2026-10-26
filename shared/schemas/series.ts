@@ -1,6 +1,6 @@
 import { z } from 'zod';
-import { CharacterSchema } from './character';
-import { SeasonSchema } from './season';
+import { CharacterSchema } from '@hero-ranker/shared/schemas/character';
+import { SeasonSchema } from '@hero-ranker/shared/schemas/season';
 
 export const SeriesSchema = z.object({
   id: z.number(),

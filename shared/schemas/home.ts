@@ -1,6 +1,6 @@
 import { z } from 'zod';
-import { SeriesCardSchema } from './series';
-import { CharacterCardSchema } from './character';
+import { SeriesCardSchema } from '@hero-ranker/shared/schemas/series';
+import { CharacterCardSchema } from '@hero-ranker/shared/schemas/character';
 
 export const HomeDataSchema = z.object({
   topSeries: z.array(SeriesCardSchema),
