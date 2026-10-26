@@ -3,6 +3,7 @@
 import CharacterRatingModal from '@/app/components/CharacterRatingModal';
 import Status from '@/app/components/Status';
 import { getImageUrl } from '@/common';
+import { getCurrentUser } from '@/services/auth.service';
 import { getCharacter } from '@/services/character.service';
 import { saveVote } from '@/services/vote.service';
 import { CharacterDetail } from '@hero-ranker/shared/schemas/character';
@@ -16,6 +17,7 @@ import {
 } from 'lucide-react';
 import Image from 'next/image';
 import { useParams } from 'next/navigation';
+import Link from 'next/link';
 import { useState } from 'react';
 
 export default function Character() {
@@ -32,6 +34,15 @@ export default function Character() {
   } = useQuery<CharacterDetail | null>({
     queryKey: ['character', id],
     queryFn: () => getCharacter(id),
+  });
+
+  const {
+    data: userInfo,
+    isPending: isUserPending,
+    error: userError,
+  } = useQuery({
+    queryKey: ['me'],
+    queryFn: getCurrentUser,
   });
 
   const voteMutation = useMutation({
@@ -148,33 +159,46 @@ export default function Character() {
           </div>
 
           <div className="flex flex-col items-center justify-center">
-            <button
-              onClick={() => {
-                setIsRatingModalOpen(true);
-              }}
-              className={`${
-                character.vote
-                  ? character.vote.isEvil
-                    ? 'bg-evil'
-                    : 'bg-good'
-                  : 'bg-gray-800/80'
-              } group flex flex-col items-center justify-center gap-1 rounded-2xl p-3.5 text-gray-200 transition-all hover:scale-105 active:scale-95 cursor-pointer`}
-            >
-              {character.vote ? (
-                character.vote.points === 1 ? (
-                  <ThumbsDown className="h-6 w-6" />
-                ) : character.vote.points === 2 ? (
-                  <FaceNeutral className="h-6 w-6" />
-                ) : (
-                  <ThumbsUp className="h-6 w-6" />
-                )
-              ) : (
-                <PencilSparkles className="h-6 w-6 text-gray-300 transition-transform group-hover:rotate-12" />
-              )}
-            </button>
-            <span className="mt-2 text-[10px] font-bold tracking-widest text-gray-400 uppercase">
-              {character.vote ? 'Your Vote' : 'Vote Now!'}
-            </span>
+            {isUserPending ? null : userError ? (
+              <p>Couldn't authorize user. Restart page.</p>
+            ) : userInfo ? (
+              <>
+                <button
+                  onClick={() => {
+                    setIsRatingModalOpen(true);
+                  }}
+                  className={`${
+                    character.vote
+                      ? character.vote.isEvil
+                        ? 'bg-evil'
+                        : 'bg-good'
+                      : 'bg-gray-800/80'
+                  } group flex flex-col items-center justify-center gap-1 rounded-2xl p-3.5 text-gray-200 transition-all hover:scale-105 active:scale-95 cursor-pointer`}
+                >
+                  {character.vote ? (
+                    character.vote.points === 1 ? (
+                      <ThumbsDown className="h-6 w-6" />
+                    ) : character.vote.points === 2 ? (
+                      <FaceNeutral className="h-6 w-6" />
+                    ) : (
+                      <ThumbsUp className="h-6 w-6" />
+                    )
+                  ) : (
+                    <PencilSparkles className="h-6 w-6 text-gray-300 transition-transform group-hover:rotate-12" />
+                  )}
+                </button>
+                <span className="mt-2 text-[10px] font-bold tracking-widest text-gray-400 uppercase">
+                  {character.vote ? 'Your Vote' : 'Vote Now!'}
+                </span>
+              </>
+            ) : (
+              <Link
+                href="/login"
+                className="rounded-xl bg-primary px-5 py-3 text-sm font-bold text-white shadow-lg transition hover:brightness-110 active:scale-95"
+              >
+                Log in to vote.
+              </Link>
+            )}
           </div>
         </div>
       </div>
