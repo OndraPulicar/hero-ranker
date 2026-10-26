@@ -14,6 +14,7 @@ describe('SeriesService', () => {
     character: {
       findMany: jest.fn(),
     },
+    $queryRaw: jest.fn(),
   };
   let service: SeriesService;
 
@@ -60,16 +61,49 @@ describe('SeriesService', () => {
     it('returns characters using the requested sort and limit', async () => {
       const characters = [{ id: 1, name: 'Hero' }];
       prismaService.series.findUnique.mockResolvedValue({ id: 1 });
-      prismaService.character.findMany.mockResolvedValue(characters);
+      prismaService.$queryRaw.mockResolvedValue([
+        {
+          id: 1,
+          name: 'Hero',
+          alternativeName: null,
+          seriesId: 1,
+          appearsInAllSeasons: true,
+          totalVotes: 1,
+          evilVotes: 0,
+          points: 2,
+          imageKey: null,
+        },
+      ]);
 
       await expect(
-        service.getCharactersBySeriesId(1, { sortBy: 'name', limit: 5 }),
-      ).resolves.toEqual(characters);
-      expect(prismaService.character.findMany).toHaveBeenCalledWith({
-        where: { seriesId: 1 },
-        orderBy: { name: 'asc' },
-        take: 5,
-      });
+        service.getCharactersBySeriesId(1, {
+          sortBy: 'RATING',
+          karma: 'GOOD',
+          season: 3,
+          limit: 5,
+        }),
+      ).resolves.toEqual([
+        {
+          id: 1,
+          name: 'Hero',
+          alternativeName: null,
+          seriesId: 1,
+          appearsInAllSeasons: true,
+          totalVotes: 1,
+          evilVotes: 0,
+          points: 2,
+          imageKey: null,
+        },
+      ]);
+
+      const query = prismaService.$queryRaw.mock.calls[0][0];
+      expect(query.text).toContain('c."points"::numeric / c."totalVotes"');
+      expect(query.text).toContain('c."totalVotes" DESC');
+      expect(query.text).toContain('c."evilVotes"::numeric / c."totalVotes" < 0.25');
+      expect(query.text).toContain('"_CharacterToSeason"');
+      expect(query.text).toContain('c."appearsInAllSeasons" = true');
+      expect(query.values).toEqual(expect.arrayContaining([1, 3, 5]));
+      expect(prismaService.character.findMany).not.toHaveBeenCalled();
     });
 
     it('throws when the series does not exist', async () => {
@@ -78,7 +112,7 @@ describe('SeriesService', () => {
       await expect(service.getCharactersBySeriesId(99, {})).rejects.toThrow(
         new NotFoundException('Series with id 99 not found'),
       );
-      expect(prismaService.character.findMany).not.toHaveBeenCalled();
+      expect(prismaService.$queryRaw).not.toHaveBeenCalled();
     });
   });
 });

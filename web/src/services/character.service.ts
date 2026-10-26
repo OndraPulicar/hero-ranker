@@ -1,5 +1,5 @@
 import { API_URL } from '@/config';
-import { CharacterFilters } from '@/types/character';
+import { CharacterFilters } from '@hero-ranker/shared/schemas/character';
 import {
   CharacterDetailSchema,
   CharacterSchema,
@@ -29,8 +29,7 @@ export const getCharacters = async (
   filters: CharacterFilters,
 ) => {
   const searchParams = new URLSearchParams({
-    seriesId: seriesId,
-    sort: filters.sort,
+    sortBy: filters.sortBy,
   });
   if (filters.season !== 'ALL') {
     searchParams.set('season', String(filters.season));
@@ -40,9 +39,12 @@ export const getCharacters = async (
     searchParams.set('karma', filters.karma);
   }
 
-  const response = await fetch(`${API_URL}/characters?${searchParams}`, {
-    credentials: 'include',
-  });
+  const response = await fetch(
+    `${API_URL}/series/${seriesId}/characters?${searchParams}`,
+    {
+      credentials: 'include',
+    },
+  );
 
   if (response.status === 404) {
     return null;

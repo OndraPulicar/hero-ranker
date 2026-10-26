@@ -1,16 +1,22 @@
+import { CharacterFilters } from '@hero-ranker/shared/schemas/character';
 import { Type } from 'class-transformer';
 import { IsIn, IsInt, IsOptional, Max, Min } from 'class-validator';
 
-export type Alignment = 'GOOD' | 'EVIL' | 'NEUTRAL';
+export type Karma = 'GOOD' | 'EVIL' | 'NEUTRAL';
 
 export class GetCharactersBySeriesIdDto {
   @IsOptional()
   @IsIn(['GOOD', 'EVIL', 'NEUTRAL'])
-  alignment?: Alignment;
+  karma?: CharacterFilters['karma'];
 
   @IsOptional()
-  @IsIn(['rating', 'name'])
-  sortBy?: 'rating' | 'name';
+  @IsIn(['NAME', 'RATING', 'KARMA'])
+  sortBy?: CharacterFilters['sortBy'];
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  season?: number;
 
   @IsOptional()
   @Type(() => Number)

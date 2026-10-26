@@ -12,6 +12,21 @@ import {
 } from '@hero-ranker/shared/schemas/series';
 import { CharacterSchema } from '@hero-ranker/shared/schemas/character';
 
+const sortByMap = {
+  RATING:
+    'CASE WHEN c."totalVotes" > 0 THEN c."points"::numeric / c."totalVotes" ELSE 0 END DESC, c."totalVotes" DESC',
+  NAME: 'c."name" ASC',
+  KARMA:
+    'CASE WHEN c."totalVotes" > 0 THEN c."evilVotes"::numeric / c."totalVotes" ELSE 0 END ASC',
+} as const;
+
+const karmaFilterMap = {
+  GOOD: 'c."totalVotes" > 0 AND c."evilVotes"::numeric / c."totalVotes" < 0.25',
+  NEUTRAL:
+    'c."totalVotes" > 0 AND c."evilVotes"::numeric / c."totalVotes" BETWEEN 0.25 AND 0.75',
+  EVIL: 'c."totalVotes" > 0 AND c."evilVotes"::numeric / c."totalVotes" > 0.75',
+} as const;
+
 @Injectable()
 export class SeriesService {
   constructor(
@@ -62,13 +77,40 @@ export class SeriesService {
       throw new NotFoundException(`Series with id ${id} not found`);
     }
 
-    const characters = await this.prismaService.character.findMany({
-      where: {
-        seriesId: id,
-      },
-      orderBy: query.sortBy ? { [query.sortBy]: 'asc' } : undefined,
-      take: query.limit,
-    });
+    const orderBy = query.sortBy
+      ? Prisma.raw(sortByMap[query.sortBy])
+      : Prisma.raw('c."id" ASC');
+    const karmaFilter = query.karma
+      ? Prisma.raw(karmaFilterMap[query.karma])
+      : Prisma.empty;
+
+    const characters = await this.prismaService.$queryRaw<
+      Prisma.CharacterGetPayload<object>[]
+    >`
+      SELECT c.*
+      FROM "Character" c
+      WHERE c."seriesId" = ${id}
+      ${
+        query.season !== undefined
+          ? Prisma.sql`
+            AND (
+              c."appearsInAllSeasons" = true
+              OR EXISTS (
+                SELECT 1
+                FROM "_CharacterToSeason" cs
+                JOIN "Season" s ON s.id = cs."B"
+                WHERE cs."A" = c.id
+                  AND cs."B" = ${query.season}
+                  AND s."seriesId" = ${id}
+              )
+            )
+          `
+          : Prisma.empty
+      }
+      ${query.karma ? Prisma.sql`AND ${karmaFilter}` : Prisma.empty}
+      ORDER BY ${orderBy}
+      ${query.limit !== undefined ? Prisma.sql`LIMIT ${query.limit}` : Prisma.empty}
+    `;
 
     return CharacterSchema.array().parse(characters);
   }

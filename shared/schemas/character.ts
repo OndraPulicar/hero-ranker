@@ -29,3 +29,8 @@ export const CharacterDetailSchema = CharacterSchema.extend({
 export type Character = z.infer<typeof CharacterSchema>;
 export type CharacterCard = z.infer<typeof CharacterCardSchema>;
 export type CharacterDetail = z.infer<typeof CharacterDetailSchema>;
+export type CharacterFilters = {
+  season: number | 'ALL';
+  karma: 'GOOD' | 'NEUTRAL' | 'EVIL' | 'ALL';
+  sortBy: 'RATING' | 'NAME' | 'KARMA';
+};

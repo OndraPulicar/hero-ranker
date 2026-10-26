@@ -1,10 +1,10 @@
-import { CharacterFilters as CharacterFilterType } from '@/types/character';
 import { Season } from '@hero-ranker/shared/schemas/season';
 import { ChevronDown } from 'lucide-react';
+import { CharacterFilters as CharacterFiltersType } from '@hero-ranker/shared/schemas/character';
 
 type CharacterFiltersProps = {
-  filters: CharacterFilterType;
-  setFilters: React.Dispatch<React.SetStateAction<CharacterFilterType>>;
+  filters: CharacterFiltersType;
+  setFilters: React.Dispatch<React.SetStateAction<CharacterFiltersType>>;
   seasons: Season[];
 };
 
@@ -69,7 +69,7 @@ export default function CharacterFilters({
               onChange={(event) =>
                 setFilters((prev) => ({
                   ...prev,
-                  karma: event.target.value as CharacterFilterType['karma'],
+                  karma: event.target.value as CharacterFiltersType['karma'],
                 }))
               }
               className="w-full appearance-none rounded-lg border border-[#3b3e4b] bg-[#232631] px-3 py-2.5 text-sm text-white outline-none transition-colors hover:border-[#8d99ae] focus:border-[#D90429] focus:ring-2 focus:ring-[#D90429]/20"
@@ -96,11 +96,11 @@ export default function CharacterFilters({
           <div className="relative">
             <select
               id="sort-filter"
-              value={filters.sort}
+              value={filters.sortBy}
               onChange={(event) =>
                 setFilters((prev) => ({
                   ...prev,
-                  sort: event.target.value as CharacterFilterType['sort'],
+                  sortBy: event.target.value as CharacterFiltersType['sortBy'],
                 }))
               }
               className="w-full appearance-none rounded-lg border border-[#3b3e4b] bg-[#232631] px-3 py-2.5 text-sm text-white outline-none transition-colors hover:border-[#8d99ae] focus:border-[#D90429] focus:ring-2 focus:ring-[#D90429]/20"

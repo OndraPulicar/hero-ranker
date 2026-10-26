@@ -7,17 +7,17 @@ import { useQuery } from '@tanstack/react-query';
 import Image from 'next/image';
 import { useParams } from 'next/navigation';
 import { useState } from 'react';
-import { CharacterFilters as CharacterFilterType } from '@/types/character';
+import { CharacterFilters as CharacterFiltersType } from '@hero-ranker/shared/schemas/character';
 import CharacterFilters from '@/app/components/CharacterFilters';
 import Characters from '@/app/components/Characters';
 
 export default function Series() {
   const params = useParams<{ id: string }>();
 
-  const [filters, setFilters] = useState<CharacterFilterType>({
+  const [filters, setFilters] = useState<CharacterFiltersType>({
     season: 'ALL',
     karma: 'ALL',
-    sort: 'RATING',
+    sortBy: 'RATING',
   });
 
   const {
