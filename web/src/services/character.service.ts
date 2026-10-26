@@ -30,7 +30,7 @@ export const getCharacters = async (
 ) => {
   const searchParams = new URLSearchParams({
     seriesId: seriesId,
-    season: String(filters.season),
+    sort: filters.sort,
   });
   if (filters.season !== 'ALL') {
     searchParams.set('season', String(filters.season));
