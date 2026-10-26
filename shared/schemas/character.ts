@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { VoteSchema } from './votes';
+import { VoteSchema } from '@hero-ranker/shared/schemas/votes';
 
 export const CharacterSchema = z.object({
   id: z.number(),
@@ -21,7 +21,7 @@ export const CharacterCardSchema = CharacterSchema.pick({
 });
 
 export const CharacterDetailSchema = CharacterSchema.extend({
-  rank: z.number(),
+  rank: z.number().nullable(),
   vote: VoteSchema.nullable().optional(),
   ratingInfo: z.string(),
 });
@@ -29,3 +29,8 @@ export const CharacterDetailSchema = CharacterSchema.extend({
 export type Character = z.infer<typeof CharacterSchema>;
 export type CharacterCard = z.infer<typeof CharacterCardSchema>;
 export type CharacterDetail = z.infer<typeof CharacterDetailSchema>;
+export type CharacterFilters = {
+  season: number | 'ALL';
+  karma: 'GOOD' | 'NEUTRAL' | 'EVIL' | 'ALL';
+  sortBy: 'RATING' | 'NAME' | 'KARMA';
+};

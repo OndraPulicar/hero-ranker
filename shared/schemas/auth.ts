@@ -5,3 +5,7 @@ export const LoginErrorSchema = z.object({
   message: z.string(),
   statusCode: z.number(),
 });
+
+export const AuthTokenSchema = z.object({
+  accessToken: z.string(),
+});

@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { HomeDataSchema } from '@hero-ranker/shared/schemas/home';
 
 @Injectable()
 export class HomeService {
@@ -11,10 +12,10 @@ export class HomeService {
       this.getTopCharacters(),
     ]);
 
-    return {
+    return HomeDataSchema.parse({
       topSeries,
       topCharacters,
-    };
+    });
   }
 
   private getTopCharacters() {

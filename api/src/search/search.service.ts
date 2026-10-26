@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { SearchResultSchema } from '@hero-ranker/shared/schemas/search';
 
 @Injectable()
 export class SearchService {
@@ -51,9 +52,9 @@ export class SearchService {
       }),
     ]);
 
-    return {
+    return SearchResultSchema.parse({
       characters,
       series,
-    };
+    });
   }
 }

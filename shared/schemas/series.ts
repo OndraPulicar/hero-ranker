@@ -1,6 +1,6 @@
 import { z } from 'zod';
-import { SeasonSchema } from './season';
-import { CharacterSchema } from './character';
+import { CharacterSchema } from '@hero-ranker/shared/schemas/character';
+import { SeasonSchema } from '@hero-ranker/shared/schemas/season';
 
 export const SeriesSchema = z.object({
   id: z.number(),
@@ -17,8 +17,11 @@ export const SeriesWithVotesSchema = SeriesSchema.extend({
 });
 
 export const SeriesDetailSchema = SeriesSchema.extend({
-  seasons: z.array(SeasonSchema),
-  characters: z.array(CharacterSchema),
+  seasons: z.array(
+    SeasonSchema.extend({
+      characters: z.array(CharacterSchema),
+    }),
+  ),
 });
 
 export const SeriesCardSchema = SeriesSchema.pick({

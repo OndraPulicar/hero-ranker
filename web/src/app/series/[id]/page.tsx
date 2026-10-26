@@ -1,15 +1,24 @@
 'use client';
 
-import Card from '@/app/components/Card';
 import Status from '@/app/components/Status';
 import { getImageUrl } from '@/common';
 import { getSeries } from '@/services/series.service';
 import { useQuery } from '@tanstack/react-query';
 import Image from 'next/image';
 import { useParams } from 'next/navigation';
+import { useState } from 'react';
+import { CharacterFilters as CharacterFiltersType } from '@hero-ranker/shared/schemas/character';
+import CharacterFilters from '@/app/components/CharacterFilters';
+import Characters from '@/app/components/Characters';
 
 export default function Series() {
   const params = useParams<{ id: string }>();
+
+  const [filters, setFilters] = useState<CharacterFiltersType>({
+    season: 'ALL',
+    karma: 'ALL',
+    sortBy: 'RATING',
+  });
 
   const {
     data: series,
@@ -47,38 +56,12 @@ export default function Series() {
         />
         <div className="max-w-xl text-justify">{series.description}</div>
       </section>
-      <section>
-        <h3 className="text-lg font-bold mb-2">Seasons</h3>
-        {series.seasons.map((season) => (
-          <span key={season.id} className="pr-4">
-            {season.alternativeTitle ?? `Season ${season.seasonNumber}`}
-          </span>
-        ))}
-      </section>
-      <section>
-        <h3 className="text-lg font-bold mb-2">Characters</h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4">
-          {series.characters.map(
-            (character: {
-              id: number;
-              name: string;
-              imageKey: string | null;
-              totalVotes: number;
-            }) => (
-              <Card
-                key={character.id}
-                data={{
-                  id: character.id,
-                  resource: 'characters',
-                  title: character.name,
-                  imageUrl: getImageUrl(character.imageKey),
-                  totalVotes: character.totalVotes,
-                }}
-              />
-            ),
-          )}
-        </div>
-      </section>
+      <CharacterFilters
+        filters={filters}
+        setFilters={setFilters}
+        seasons={series.seasons}
+      ></CharacterFilters>
+      <Characters seriesId={params.id} filters={filters}></Characters>
     </div>
   );
 }
