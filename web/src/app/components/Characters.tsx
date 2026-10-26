@@ -1,7 +1,7 @@
 import { getImageUrl } from '@/common';
 import Card from './Card';
 import { CharacterFilters } from '@/types/character';
-import { useQuery } from '@tanstack/react-query';
+import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import { getCharacters } from '@/services/character.service';
 import Status from './Status';
 
@@ -18,6 +18,7 @@ export default function Characters({ seriesId, filters }: CharactersProps) {
   } = useQuery({
     queryKey: ['characters', seriesId, filters],
     queryFn: () => getCharacters(seriesId, filters),
+    placeholderData: keepPreviousData,
   });
 
   if (isPending) {
