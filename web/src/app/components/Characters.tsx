@@ -45,6 +45,6 @@ export default function Characters({
   return view === 'list' ? (
     <CharacterListView characters={characters} />
   ) : (
-    <CharacterMatrixView />
+    <CharacterMatrixView characters={characters} />
   );
 }

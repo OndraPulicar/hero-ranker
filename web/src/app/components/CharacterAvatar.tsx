@@ -30,9 +30,6 @@ export default function CharacterAvatar({ character }: CharacterAvatarProps) {
         height={80}
         className="size-20 rounded-full border-2 border-white/30 object-cover shadow-md transition-transform group-hover:scale-105 group-focus-visible:scale-105"
       />
-      <span className="line-clamp-2 text-sm font-semibold text-text">
-        {character.name}
-      </span>
       <span
         id={`character-avatar-tooltip-${character.id}`}
         role="tooltip"

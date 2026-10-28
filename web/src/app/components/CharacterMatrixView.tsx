@@ -1,4 +1,13 @@
-export default function CharacterMatrixView() {
+import { Character } from '@hero-ranker/shared/schemas/character';
+import CharacterAvatar from './CharacterAvatar';
+
+type CharacterMatrixViewProps = {
+  characters: Character[];
+};
+
+export default function CharacterMatrixView({
+  characters,
+}: CharacterMatrixViewProps) {
   return (
     <section>
       <h3 className="mb-2 text-lg font-bold">Character matrix</h3>
@@ -8,9 +17,8 @@ export default function CharacterMatrixView() {
         </span>
         <div className="ml-6 flex-1">
           <div
-            aria-label="Character matrix: rating runs from 0 at the bottom to 10 at the top; karma runs from 100 percent good on the left through 0 in the middle to 100 percent evil on the right"
+            aria-label="Characters plotted by rating and karma"
             className="relative aspect-[4/3] w-full"
-            role="img"
             style={{
               backgroundImage: `
                 linear-gradient(
@@ -25,6 +33,28 @@ export default function CharacterMatrixView() {
               backgroundSize: '100% 100%, 10% 100%, 100% 10%',
             }}
           >
+            {characters.map((character) => {
+              const hasVotes = character.totalVotes > 0;
+              const karma = hasVotes
+                ? (character.evilVotes / character.totalVotes) * 100
+                : 50;
+              const rating = hasVotes
+                ? (character.points / character.totalVotes / 3) * 10
+                : 0;
+
+              return (
+                <div
+                  key={character.id}
+                  className="absolute z-[1] -translate-x-1/2 -translate-y-1/2"
+                  style={{
+                    left: `${karma}%`,
+                    top: `${100 - rating * 10}%`,
+                  }}
+                >
+                  <CharacterAvatar character={character} />
+                </div>
+              );
+            })}
             <div
               aria-hidden="true"
               className="pointer-events-none absolute inset-y-0 right-full mr-2 w-6 text-right text-[11px] font-bold text-gray-400"
