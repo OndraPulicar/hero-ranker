@@ -1,12 +1,8 @@
-import { getImageUrl } from '@/common';
-import Card from './Card';
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import { getCharacters } from '@/services/character.service';
 import Status from './Status';
-import {
-  Character,
-  CharacterFilters,
-} from '@hero-ranker/shared/schemas/character';
+import { CharacterFilters } from '@hero-ranker/shared/schemas/character';
+import CharacterListView from './CharacterListView';
 
 type CharactersProps = {
   seriesId: string;
@@ -38,23 +34,5 @@ export default function Characters({ seriesId, filters }: CharactersProps) {
     );
   }
 
-  return (
-    <section>
-      <h3 className="text-lg font-bold mb-2">Characters</h3>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4">
-        {characters.map((character: Character) => (
-          <Card
-            key={character.id}
-            data={{
-              id: character.id,
-              resource: 'characters',
-              title: character.name,
-              imageUrl: getImageUrl(character.imageKey),
-              totalVotes: character.totalVotes,
-            }}
-          />
-        ))}
-      </div>
-    </section>
-  );
+  return <CharacterListView characters={characters} />;
 }
