@@ -41,14 +41,16 @@ export default function CharacterMatrixView({
               const rating = hasVotes
                 ? (character.points / character.totalVotes / 3) * 10
                 : 0;
+              const jitterX = ((character.id * 17) % 41) - 20;
+              const jitterY = ((character.id * 29) % 41) - 20;
 
               return (
                 <div
                   key={character.id}
-                  className="absolute z-[1] -translate-x-1/2 -translate-y-1/2"
+                  className="absolute z-[1] -translate-x-1/2 -translate-y-1/2 hover:z-20 focus-within:z-20"
                   style={{
-                    left: `${karma}%`,
-                    top: `${100 - rating * 10}%`,
+                    left: `calc(${karma}% + ${jitterX}px)`,
+                    top: `calc(${100 - rating * 10}% + ${jitterY}px)`,
                   }}
                 >
                   <CharacterAvatar character={character} />

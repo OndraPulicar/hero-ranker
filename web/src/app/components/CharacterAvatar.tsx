@@ -20,7 +20,7 @@ export default function CharacterAvatar({ character }: CharacterAvatarProps) {
   return (
     <Link
       href={`/characters/${character.id}`}
-      className="group relative flex w-24 flex-col items-center gap-2 text-center"
+      className="group relative flex w-24 flex-col items-center gap-2 text-center opacity-60 transition-opacity hover:opacity-100 focus-visible:opacity-100"
       aria-describedby={`character-avatar-tooltip-${character.id}`}
     >
       <Image
