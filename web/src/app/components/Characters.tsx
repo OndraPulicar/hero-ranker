@@ -3,13 +3,21 @@ import { getCharacters } from '@/services/character.service';
 import Status from './Status';
 import { CharacterFilters } from '@hero-ranker/shared/schemas/character';
 import CharacterListView from './CharacterListView';
+import CharacterMatrixView from './CharacterMatrixView';
+
+export type CharacterView = 'list' | 'matrix';
 
 type CharactersProps = {
   seriesId: string;
   filters: CharacterFilters;
+  view: CharacterView;
 };
 
-export default function Characters({ seriesId, filters }: CharactersProps) {
+export default function Characters({
+  seriesId,
+  filters,
+  view,
+}: CharactersProps) {
   const {
     data: characters,
     isPending,
@@ -34,5 +42,9 @@ export default function Characters({ seriesId, filters }: CharactersProps) {
     );
   }
 
-  return <CharacterListView characters={characters} />;
+  return view === 'list' ? (
+    <CharacterListView characters={characters} />
+  ) : (
+    <CharacterMatrixView />
+  );
 }

@@ -9,7 +9,8 @@ import { useParams } from 'next/navigation';
 import { useState } from 'react';
 import { CharacterFilters as CharacterFiltersType } from '@hero-ranker/shared/schemas/character';
 import CharacterFilters from '@/app/components/CharacterFilters';
-import Characters from '@/app/components/Characters';
+import Characters, { type CharacterView } from '@/app/components/Characters';
+import CharacterViewSwitcher from '@/app/components/CharacterViewSwitcher';
 
 export default function Series() {
   const params = useParams<{ id: string }>();
@@ -19,6 +20,7 @@ export default function Series() {
     karma: 'ALL',
     sortBy: 'RATING',
   });
+  const [characterView, setCharacterView] = useState<CharacterView>('list');
 
   const {
     data: series,
@@ -61,7 +63,12 @@ export default function Series() {
         setFilters={setFilters}
         seasons={series.seasons}
       ></CharacterFilters>
-      <Characters seriesId={params.id} filters={filters}></Characters>
+      <CharacterViewSwitcher view={characterView} onChange={setCharacterView} />
+      <Characters
+        seriesId={params.id}
+        filters={filters}
+        view={characterView}
+      ></Characters>
     </div>
   );
 }
