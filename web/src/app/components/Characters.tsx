@@ -1,19 +1,23 @@
-import { getImageUrl } from '@/common';
-import Card from './Card';
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import { getCharacters } from '@/services/character.service';
 import Status from './Status';
-import {
-  Character,
-  CharacterFilters,
-} from '@hero-ranker/shared/schemas/character';
+import { CharacterFilters } from '@hero-ranker/shared/schemas/character';
+import CharacterListView from './CharacterListView';
+import CharacterMatrixView from './CharacterMatrixView';
+
+export type CharacterView = 'list' | 'matrix';
 
 type CharactersProps = {
   seriesId: string;
   filters: CharacterFilters;
+  view: CharacterView;
 };
 
-export default function Characters({ seriesId, filters }: CharactersProps) {
+export default function Characters({
+  seriesId,
+  filters,
+  view,
+}: CharactersProps) {
   const {
     data: characters,
     isPending,
@@ -38,23 +42,9 @@ export default function Characters({ seriesId, filters }: CharactersProps) {
     );
   }
 
-  return (
-    <section>
-      <h3 className="text-lg font-bold mb-2">Characters</h3>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4">
-        {characters.map((character: Character) => (
-          <Card
-            key={character.id}
-            data={{
-              id: character.id,
-              resource: 'characters',
-              title: character.name,
-              imageUrl: getImageUrl(character.imageKey),
-              totalVotes: character.totalVotes,
-            }}
-          />
-        ))}
-      </div>
-    </section>
+  return view === 'list' ? (
+    <CharacterListView characters={characters} />
+  ) : (
+    <CharacterMatrixView characters={characters} />
   );
 }
