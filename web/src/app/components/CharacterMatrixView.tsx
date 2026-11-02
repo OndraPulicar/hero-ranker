@@ -5,6 +5,15 @@ type CharacterMatrixViewProps = {
   characters: Character[];
 };
 
+const AVATAR_RADIUS = 40;
+
+function getInsetPosition(value: number, offset = 0) {
+  const pixelOffset = AVATAR_RADIUS * (1 - (2 * value) / 100) + offset;
+  const operator = pixelOffset < 0 ? '-' : '+';
+
+  return `calc(${value}% ${operator} ${Math.abs(pixelOffset)}px)`;
+}
+
 export default function CharacterMatrixView({
   characters,
 }: CharacterMatrixViewProps) {
@@ -65,10 +74,10 @@ export default function CharacterMatrixView({
               return (
                 <div
                   key={character.id}
-                  className="absolute z-[1] -translate-x-1/2 -translate-y-1/2 hover:z-20 focus-within:z-20"
+                  className="absolute z-[1] -translate-x-1/2 hover:z-20 focus-within:z-20"
                   style={{
-                    left: `${karma}%`,
-                    top: `${100 - rating * 10}%`,
+                    left: getInsetPosition(karma),
+                    top: getInsetPosition(100 - rating * 10, -AVATAR_RADIUS),
                   }}
                 >
                   <div className="relative">
@@ -97,7 +106,7 @@ export default function CharacterMatrixView({
                   key={index}
                   className="absolute right-0"
                   style={{
-                    top: `${index * 10}%`,
+                    top: getInsetPosition(index * 10),
                     transform:
                       index === 0
                         ? 'translateY(0)'
@@ -111,10 +120,20 @@ export default function CharacterMatrixView({
               ))}
             </div>
           </div>
-          <div className="mt-2 flex justify-between text-[11px] font-bold tracking-wider text-gray-400 uppercase">
-            <span>100% Good</span>
-            <span>Neutral</span>
-            <span>Evil 100%</span>
+          <div className="relative mt-2 h-4 text-[11px] font-bold tracking-wider text-gray-400 uppercase">
+            {[0, 50, 100].map((value) => (
+              <span
+                key={value}
+                className="absolute -translate-x-1/2 whitespace-nowrap"
+                style={{ left: getInsetPosition(value) }}
+              >
+                {value === 50
+                  ? 'Neutral'
+                  : value === 0
+                    ? '100% Good'
+                    : 'Evil 100%'}
+              </span>
+            ))}
           </div>
           <div className="mt-2 text-center text-[11px] font-bold tracking-wider text-gray-400 uppercase">
             Karma
