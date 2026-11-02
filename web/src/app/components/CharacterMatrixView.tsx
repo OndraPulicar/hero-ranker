@@ -54,13 +54,40 @@ export default function CharacterMatrixView({
                   var(--good),
                   #fda4af 50%,
                   var(--evil)
-                ),
-                linear-gradient(to right, rgb(255 255 255 / 0.45) 1px, transparent 1px),
-                linear-gradient(to bottom, rgb(255 255 255 / 0.45) 1px, transparent 1px)
+                )
               `,
-              backgroundSize: '100% 100%, 10% 100%, 100% 10%',
+              backgroundSize: '100% 100%',
             }}
           >
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0"
+            >
+              {Array.from({ length: 11 }, (_, index) => {
+                const value = index * 10;
+
+                return (
+                  <div key={value}>
+                    <span
+                      className="absolute border-l-2 border-dotted border-white/40"
+                      style={{
+                        left: getInsetPosition(value),
+                        top: AVATAR_RADIUS,
+                        bottom: AVATAR_RADIUS,
+                      }}
+                    />
+                    <span
+                      className="absolute border-t-2 border-dotted border-white/40"
+                      style={{
+                        top: getInsetPosition(value),
+                        left: AVATAR_RADIUS,
+                        right: AVATAR_RADIUS,
+                      }}
+                    />
+                  </div>
+                );
+              })}
+            </div>
             {[...characterGroups.values()].map((group) => {
               const character = group[0];
               const hasVotes = character.totalVotes > 0;
