@@ -8,6 +8,25 @@ type CharacterMatrixViewProps = {
 export default function CharacterMatrixView({
   characters,
 }: CharacterMatrixViewProps) {
+  const characterGroups = new Map<string, Character[]>();
+  for (const character of characters) {
+    const karma =
+      character.totalVotes > 0
+        ? character.evilVotes / character.totalVotes
+        : 0.5;
+    const rating =
+      character.totalVotes > 0
+        ? character.points / character.totalVotes / 3
+        : 0;
+    const key = `${karma}:${rating}`;
+    const group = characterGroups.get(key);
+    if (group) {
+      group.push(character);
+    } else {
+      characterGroups.set(key, [character]);
+    }
+  }
+
   return (
     <section>
       <h3 className="mb-2 text-lg font-bold">Character matrix</h3>
@@ -33,7 +52,8 @@ export default function CharacterMatrixView({
               backgroundSize: '100% 100%, 10% 100%, 100% 10%',
             }}
           >
-            {characters.map((character) => {
+            {[...characterGroups.values()].map((group) => {
+              const character = group[0];
               const hasVotes = character.totalVotes > 0;
               const karma = hasVotes
                 ? (character.evilVotes / character.totalVotes) * 100
@@ -41,19 +61,30 @@ export default function CharacterMatrixView({
               const rating = hasVotes
                 ? (character.points / character.totalVotes / 3) * 10
                 : 0;
-              const jitterX = ((character.id * 17) % 41) - 20;
-              const jitterY = ((character.id * 29) % 41) - 20;
 
               return (
                 <div
                   key={character.id}
                   className="absolute z-[1] -translate-x-1/2 -translate-y-1/2 hover:z-20 focus-within:z-20"
                   style={{
-                    left: `calc(${karma}% + ${jitterX}px)`,
-                    top: `calc(${100 - rating * 10}% + ${jitterY}px)`,
+                    left: `${karma}%`,
+                    top: `${100 - rating * 10}%`,
                   }}
                 >
-                  <CharacterAvatar character={character} />
+                  <div className="relative">
+                    <CharacterAvatar character={character} />
+                    {group.length > 1 && (
+                      <div className="absolute left-[88px] -top-3 flex flex-row -space-x-2">
+                        {group.slice(1).map((groupCharacter) => (
+                          <CharacterAvatar
+                            key={groupCharacter.id}
+                            character={groupCharacter}
+                            size="small"
+                          />
+                        ))}
+                      </div>
+                    )}
+                  </div>
                 </div>
               );
             })}

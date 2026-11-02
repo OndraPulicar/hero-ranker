@@ -5,9 +5,14 @@ import Link from 'next/link';
 
 type CharacterAvatarProps = {
   character: Character;
+  size?: 'normal' | 'small';
 };
 
-export default function CharacterAvatar({ character }: CharacterAvatarProps) {
+export default function CharacterAvatar({
+  character,
+  size = 'normal',
+}: CharacterAvatarProps) {
+  const isSmall = size === 'small';
   const rating =
     character.totalVotes > 0
       ? ((character.points / character.totalVotes / 3) * 10).toFixed(1)
@@ -20,15 +25,20 @@ export default function CharacterAvatar({ character }: CharacterAvatarProps) {
   return (
     <Link
       href={`/characters/${character.id}`}
-      className="group relative flex w-24 flex-col items-center gap-2 text-center opacity-60 transition-opacity hover:opacity-100 focus-visible:opacity-100"
+      className={`group relative flex ${
+        isSmall ? 'size-8' : 'w-24 flex-col items-center gap-2 text-center'
+      } opacity-60 transition-opacity hover:opacity-100 focus-visible:opacity-100`}
+      aria-label={character.name}
       aria-describedby={`character-avatar-tooltip-${character.id}`}
     >
       <Image
         src={getImageUrl(character.imageKey)}
-        alt={character.name}
-        width={80}
-        height={80}
-        className="size-20 rounded-full border-2 border-white/30 object-cover shadow-md transition-transform group-hover:scale-105 group-focus-visible:scale-105"
+        alt=""
+        width={isSmall ? 32 : 80}
+        height={isSmall ? 32 : 80}
+        className={`rounded-full border-2 border-white/30 object-cover shadow-md transition-transform ${
+          isSmall ? 'size-8' : 'size-20'
+        } group-hover:scale-105 group-focus-visible:scale-105`}
       />
       <span
         id={`character-avatar-tooltip-${character.id}`}
