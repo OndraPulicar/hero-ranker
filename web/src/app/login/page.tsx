@@ -1,112 +1,12 @@
 'use client';
 
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { useRouter } from 'next/navigation';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { loginUser, LoginCredentials } from '@/services/auth.service';
+import LoginForm from '@/features/auth/components/LoginForm';
+import useLogin from '@/features/auth/hooks/useLogin';
 
 export default function Login() {
-  const { register, handleSubmit } = useForm<LoginCredentials>();
-  const [error, setError] = useState<string | undefined>();
-  const router = useRouter();
-  const queryClient = useQueryClient();
-
-  const loginMutation = useMutation({
-    mutationFn: loginUser,
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ['me'] });
-      setError(undefined);
-      router.push('/');
-    },
-    onError: (error) => {
-      setError(error instanceof Error ? error.message : 'Login failed.');
-    },
-  });
-
-  const onSubmit = (data: LoginCredentials) => {
-    loginMutation.mutate(data);
-  };
+  const { submit, error } = useLogin();
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4">
-      <form
-        onSubmit={(event) => {
-          void handleSubmit(onSubmit)(event);
-        }}
-        className="w-full max-w-md bg-surface rounded-2xl shadow-xl p-8"
-      >
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-text">Welcome back</h1>
-          <p className="mt-2 text-muted">Log in to your Hero Ranker account</p>
-          {error && <p className="mt-2 text-primary">{error}</p>}
-        </div>
-
-        <div className="flex flex-col gap-5">
-          <div>
-            <label
-              htmlFor="email"
-              className="block mb-2 text-sm font-medium text-text"
-            >
-              Email
-            </label>
-
-            <input
-              id="email"
-              type="email"
-              placeholder="you@example.com"
-              className="w-full rounded-lg border border-muted/40 bg-background px-4 py-3
-                text-text placeholder:text-muted/50
-                outline-none transition
-                focus:border-primary focus:ring-2 focus:ring-primary/20"
-              {...register('email')}
-            />
-          </div>
-
-          <div>
-            <div className="flex justify-between items-center mb-2">
-              <label
-                htmlFor="password"
-                className="text-sm font-medium text-text"
-              >
-                Password
-              </label>
-
-              <a href="#" className="text-sm text-primary hover:underline">
-                Forgot password?
-              </a>
-            </div>
-
-            <input
-              id="password"
-              type="password"
-              placeholder="••••••••"
-              className="w-full rounded-lg border border-muted/40 bg-background px-4 py-3
-                text-text placeholder:text-muted/50
-                outline-none transition
-                focus:border-primary focus:ring-2 focus:ring-primary/20"
-              {...register('password')}
-            />
-          </div>
-
-          <button
-            type="submit"
-            className="mt-2 w-full rounded-lg bg-primary px-4 py-3
-                   font-semibold text-white
-                   transition hover:brightness-110
-                   active:scale-[0.98]"
-          >
-            Log in
-          </button>
-        </div>
-
-        <p className="mt-6 text-center text-sm text-muted">
-          Don't have an account?{' '}
-          <a href="#" className="font-medium text-primary hover:underline">
-            Sign up
-          </a>
-        </p>
-      </form>
-    </div>
+    <LoginForm error={error} onSubmit={(credentials) => submit(credentials)} />
   );
 }
