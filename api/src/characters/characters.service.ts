@@ -94,25 +94,22 @@ export class CharactersService {
   }
 
   private async getCharacterRank(characterId: number) {
-    const result = await this.prismaService.$queryRaw<{ rank: number }[]>`
-      SELECT ranked."rank"::int AS rank
-      FROM (
-        SELECT
-          id,
-          DENSE_RANK() OVER (
-            ORDER BY
-              CASE
-                WHEN "totalVotes" > 0
-                THEN "points"::numeric / "totalVotes"
-                ELSE 0
-              END DESC
-          ) AS "rank"
-        FROM "Character"
-      ) AS ranked
-      WHERE ranked.id = ${characterId}
+    const character = await this.prismaService.character.findUnique({
+      where: { id: characterId },
+      select: { rating: true },
+    });
+
+    if (!character) {
+      return null;
+    }
+
+    const result = await this.prismaService.$queryRaw<{ count: bigint }[]>`
+      SELECT COUNT(DISTINCT rating) AS count
+      FROM "Character"
+      WHERE rating > ${character.rating}
     `;
 
-    return result[0]?.rank ?? null;
+    return Number(result[0].count) + 1;
   }
 
   async updateCharacter(
