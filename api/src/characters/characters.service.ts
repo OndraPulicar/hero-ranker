@@ -187,20 +187,33 @@ export class CharactersService {
       points?: number;
     },
   ) {
-    await tx.character.update({
-      where: { id: characterId },
-      data: {
-        ...(delta.totalVotes !== undefined && {
-          totalVotes: { increment: delta.totalVotes },
-        }),
-        ...(delta.evilVotes !== undefined && {
-          evilVotes: { increment: delta.evilVotes },
-        }),
-        ...(delta.points !== undefined && {
-          points: { increment: delta.points },
-        }),
-      },
-    });
+    const totalVotesDelta = delta.totalVotes ?? 0;
+    const evilVotesDelta = delta.evilVotes ?? 0;
+    const pointsDelta = delta.points ?? 0;
+
+    await tx.$executeRaw`
+      UPDATE "Character"
+      SET
+        "totalVotes" = "totalVotes" + ${totalVotesDelta},
+        "evilVotes" = "evilVotes" + ${evilVotesDelta},
+        "points" = "points" + ${pointsDelta},
+        "rating" = CASE
+          WHEN "totalVotes" + ${totalVotesDelta} = 0 THEN 0
+          ELSE ROUND(
+            (
+              "points" + ${pointsDelta} - "totalVotes" - ${totalVotesDelta}
+            )::numeric / (2 * ("totalVotes" + ${totalVotesDelta})) * 100
+          )::int
+        END,
+        "karma" = CASE
+          WHEN "totalVotes" + ${totalVotesDelta} = 0 THEN 0
+          ELSE ROUND(
+            ("evilVotes" + ${evilVotesDelta})::numeric
+              / ("totalVotes" + ${totalVotesDelta}) * 100
+          )::int
+        END
+      WHERE id = ${characterId}
+    `;
   }
 
   async updateCharacterRatingInfo(id: number): Promise<void> {

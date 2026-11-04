@@ -103,4 +103,32 @@ describe('CharactersService', () => {
       );
     });
   });
+
+  describe('updateCharacterVoteStats', () => {
+    it('updates aggregate vote stats and derived rating and karma atomically', async () => {
+      const queries: { query: TemplateStringsArray; values: unknown[] }[] = [];
+      const executeRaw = jest.fn(
+        (query: TemplateStringsArray, ...values: unknown[]) => {
+          queries.push({ query, values });
+          return Promise.resolve(1);
+        },
+      );
+      const tx = {
+        $executeRaw: executeRaw,
+      };
+
+      await service.updateCharacterVoteStats(tx as never, 10, {
+        totalVotes: 1,
+        evilVotes: 1,
+        points: 3,
+      });
+
+      const { query, values } = queries[0];
+      const queryText = query.join('');
+      expect(queryText).toContain('"rating" = CASE');
+      expect(queryText).toContain('"karma" = CASE');
+      expect(queryText).toContain('ROUND(');
+      expect(values).toEqual(expect.arrayContaining([1, 10]));
+    });
+  });
 });
