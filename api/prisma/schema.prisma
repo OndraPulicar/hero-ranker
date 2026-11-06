@@ -60,6 +60,8 @@ model Character {
   imageKey              String?
   createdAt             DateTime  @default(now())
   ratingInfo            String    @default("")
+  karma                 Int       @default(0)
+  rating                Int       @default(0)
 
   series Series @relation(fields: [seriesId], references: [id])
   seasons               Season[]

@@ -2,18 +2,41 @@ import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import request from 'supertest';
 import { App } from 'supertest/types';
+import cookieParser from 'cookie-parser';
 import { AppModule } from './../src/app.module';
+import { AiService } from './../src/ai/ai.service';
 import { GlobalExceptionFilter } from './../src/common/filters/global-exception.filter';
 
 describe('API endpoints (e2e)', () => {
   let app: INestApplication<App>;
 
+  const getCookie = (headers: unknown): string => {
+    if (
+      typeof headers !== 'object' ||
+      headers === null ||
+      !('set-cookie' in headers)
+    ) {
+      throw new Error('Login did not return an access-token cookie');
+    }
+
+    const setCookie = headers['set-cookie'];
+    if (!Array.isArray(setCookie) || typeof setCookie[0] !== 'string') {
+      throw new Error('Login did not return an access-token cookie');
+    }
+
+    return setCookie[0];
+  };
+
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
-    }).compile();
+    })
+      .overrideProvider(AiService)
+      .useValue({ getRanking: () => Promise.resolve('E2E test rating info') })
+      .compile();
 
     app = moduleFixture.createNestApplication();
+    app.use(cookieParser());
     app.useGlobalPipes(new ValidationPipe({ transform: true }));
     app.useGlobalFilters(new GlobalExceptionFilter());
     await app.init();
@@ -44,11 +67,13 @@ describe('API endpoints (e2e)', () => {
     expect(response.body as unknown).toEqual(
       expect.objectContaining({
         id: 1,
-        characters: expect.arrayContaining([
-          expect.objectContaining({ name: 'Alpha Hero' }),
-        ]) as unknown,
         seasons: expect.arrayContaining([
-          expect.objectContaining({ seasonNumber: 1 }),
+          expect.objectContaining({
+            seasonNumber: 1,
+            characters: expect.arrayContaining([
+              expect.objectContaining({ name: 'Alpha Hero' }),
+            ]) as unknown,
+          }),
         ]) as unknown,
       }),
     );
@@ -57,10 +82,15 @@ describe('API endpoints (e2e)', () => {
   it('GET /series/:id/characters filters and limits characters', async () => {
     const response = await request(app.getHttpServer())
       .get('/series/1/characters')
-      .query({ sortBy: 'name', limit: 1 })
+      .query({ sortBy: 'NAME', limit: 1 })
       .expect(200);
 
-    const characters = response.body as unknown[];
+    const responseBody: unknown = response.body;
+    if (!Array.isArray(responseBody)) {
+      throw new Error('Expected the endpoint to return a character array');
+    }
+
+    const characters: unknown[] = responseBody;
     expect(characters).toHaveLength(1);
     expect(characters[0]).toEqual(
       expect.objectContaining({ name: 'Alpha Hero' }),
@@ -78,7 +108,7 @@ describe('API endpoints (e2e)', () => {
     ]);
   });
 
-  it('GET /characters/:id returns character relations', async () => {
+  it('GET /characters/:id returns character detail', async () => {
     const response = await request(app.getHttpServer())
       .get('/characters/1')
       .expect(200);
@@ -86,24 +116,30 @@ describe('API endpoints (e2e)', () => {
     expect(response.body as unknown).toEqual(
       expect.objectContaining({
         id: 1,
-        series: expect.objectContaining({ id: 1 }) as unknown,
-        seasons: expect.arrayContaining([
-          expect.objectContaining({ id: 1 }),
-        ]) as unknown,
+        name: 'Alpha Hero',
+        rank: 1,
+        vote: null,
       }),
     );
   });
 
   it('supports the complete Vote workflow', async () => {
+    const loginResponse = await request(app.getHttpServer())
+      .post('/auth/login')
+      .send({ email: 'test@example.com', password: 'e2e-test-password' })
+      .expect(201);
+    const cookie = getCookie(loginResponse.headers);
+
     const createResponse = await request(app.getHttpServer())
       .post('/votes')
-      .send({ characterId: 2, userId: 2, isEvil: false, points: 1 })
+      .set('Cookie', cookie)
+      .send({ characterId: 2, isEvil: false, points: 1 })
       .expect(201);
 
     expect(createResponse.body as unknown).toEqual(
       expect.objectContaining({
         characterId: 2,
-        userId: 2,
+        userId: 1,
         isEvil: false,
         points: 1,
       }),
@@ -112,7 +148,7 @@ describe('API endpoints (e2e)', () => {
 
     const votesResponse = await request(app.getHttpServer())
       .get('/votes')
-      .query({ characterId: 2, userId: 2 })
+      .query({ characterId: 2, userId: 1 })
       .expect(200);
     expect(votesResponse.body as unknown).toEqual([
       expect.objectContaining({ id: voteId }),
@@ -127,6 +163,7 @@ describe('API endpoints (e2e)', () => {
 
     const updateResponse = await request(app.getHttpServer())
       .patch(`/votes/${voteId}`)
+      .set('Cookie', cookie)
       .send({ isEvil: true, points: 3 })
       .expect(200);
     expect(updateResponse.body as unknown).toEqual(
@@ -140,27 +177,40 @@ describe('API endpoints (e2e)', () => {
       expect.objectContaining({ totalVotes: 1, evilVotes: 1, points: 3 }),
     );
 
-    await request(app.getHttpServer()).delete(`/votes/${voteId}`).expect(200);
+    await request(app.getHttpServer())
+      .delete(`/votes/${voteId}`)
+      .set('Cookie', cookie)
+      .expect(200);
     await request(app.getHttpServer()).get(`/votes/${voteId}`).expect(404);
   });
 
   it('returns validation errors for invalid endpoint input', async () => {
+    const loginResponse = await request(app.getHttpServer())
+      .post('/auth/login')
+      .send({ email: 'test@example.com', password: 'e2e-test-password' })
+      .expect(201);
+    const cookie = getCookie(loginResponse.headers);
+
     await request(app.getHttpServer())
       .get('/characters/not-a-number')
       .expect(400);
 
     await request(app.getHttpServer())
       .post('/votes')
-      .send({ characterId: 2, userId: 2, isEvil: false, points: 4 })
+      .set('Cookie', cookie)
+      .send({ characterId: 2, isEvil: false, points: 4 })
       .expect(400);
 
     await request(app.getHttpServer())
       .post('/votes')
-      .send({ characterId: 2, userId: 2, isEvil: false, points: 0 })
+      .set('Cookie', cookie)
+      .send({ characterId: 2, isEvil: false, points: 0 })
       .expect(400);
   });
 
   afterAll(async () => {
-    await app.close();
+    if (app) {
+      await app.close();
+    }
   });
 });

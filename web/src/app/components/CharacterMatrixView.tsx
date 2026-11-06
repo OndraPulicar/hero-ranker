@@ -7,6 +7,12 @@ type CharacterMatrixViewProps = {
 
 const AVATAR_RADIUS = 40;
 
+type CharacterGroup = {
+  characters: Character[];
+  karma: number;
+  rating: number;
+};
+
 function getInsetPosition(value: number, offset = 0) {
   const pixelOffset = AVATAR_RADIUS * (1 - (2 * value) / 100) + offset;
   const operator = pixelOffset < 0 ? '-' : '+';
@@ -17,22 +23,19 @@ function getInsetPosition(value: number, offset = 0) {
 export default function CharacterMatrixView({
   characters,
 }: CharacterMatrixViewProps) {
-  const characterGroups = new Map<string, Character[]>();
+  const characterGroups = new Map<string, CharacterGroup>();
   for (const character of characters) {
-    const karma =
-      character.totalVotes > 0
-        ? character.evilVotes / character.totalVotes
-        : 0.5;
-    const rating =
-      character.totalVotes > 0
-        ? character.points / character.totalVotes / 3
-        : 0;
-    const key = `${karma}:${rating}`;
+    const karma = character.totalVotes > 0 ? character.karma : 50;
+    const key = `${karma}:${character.rating}`;
     const group = characterGroups.get(key);
     if (group) {
-      group.push(character);
+      group.characters.push(character);
     } else {
-      characterGroups.set(key, [character]);
+      characterGroups.set(key, {
+        characters: [character],
+        karma,
+        rating: character.rating,
+      });
     }
   }
 
@@ -89,29 +92,22 @@ export default function CharacterMatrixView({
               })}
             </div>
             {[...characterGroups.values()].map((group) => {
-              const character = group[0];
-              const hasVotes = character.totalVotes > 0;
-              const karma = hasVotes
-                ? (character.evilVotes / character.totalVotes) * 100
-                : 50;
-              const rating = hasVotes
-                ? (character.points / character.totalVotes / 3) * 10
-                : 0;
+              const character = group.characters[0];
 
               return (
                 <div
                   key={character.id}
                   className="absolute z-[1] -translate-x-1/2 hover:z-20 focus-within:z-20"
                   style={{
-                    left: getInsetPosition(karma),
-                    top: getInsetPosition(100 - rating * 10, -AVATAR_RADIUS),
+                    left: getInsetPosition(group.karma),
+                    top: getInsetPosition(100 - group.rating, -AVATAR_RADIUS),
                   }}
                 >
                   <div className="relative">
                     <CharacterAvatar character={character} />
-                    {group.length > 1 && (
+                    {group.characters.length > 1 && (
                       <div className="absolute left-[88px] -top-3 flex flex-row -space-x-2">
-                        {group.slice(1).map((groupCharacter) => (
+                        {group.characters.slice(1).map((groupCharacter) => (
                           <CharacterAvatar
                             key={groupCharacter.id}
                             character={groupCharacter}
@@ -142,7 +138,7 @@ export default function CharacterMatrixView({
                           : 'translateY(-50%)',
                   }}
                 >
-                  {10 - index}
+                  {100 - index * 10}%
                 </span>
               ))}
             </div>

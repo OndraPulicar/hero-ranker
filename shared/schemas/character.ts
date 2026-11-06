@@ -11,6 +11,8 @@ export const CharacterSchema = z.object({
   evilVotes: z.number(),
   points: z.number(),
   imageKey: z.string().nullable(),
+  rating: z.number(),
+  karma: z.number(),
 });
 
 export const CharacterCardSchema = CharacterSchema.pick({

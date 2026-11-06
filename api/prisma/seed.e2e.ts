@@ -1,4 +1,5 @@
 import 'dotenv/config';
+import bcrypt from 'bcrypt';
 import { PrismaClient } from '../generated/prisma/client';
 
 const prisma = new PrismaClient();
@@ -20,6 +21,8 @@ async function synchronizeAutoIncrementSequences() {
 }
 
 async function main() {
+  const passwordHash = await bcrypt.hash('e2e-test-password', 10);
+
   await prisma.vote.deleteMany();
   await prisma.character.deleteMany();
   await prisma.season.deleteMany();
@@ -89,13 +92,13 @@ async function main() {
         id: 1,
         username: 'test-user',
         email: 'test@example.com',
-        passwordHash: 'xxx',
+        passwordHash,
       },
       {
         id: 2,
         username: 'second-user',
         email: 'second@example.com',
-        passwordHash: 'yyy',
+        passwordHash,
       },
     ],
   });

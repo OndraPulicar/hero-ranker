@@ -94,25 +94,22 @@ export class CharactersService {
   }
 
   private async getCharacterRank(characterId: number) {
-    const result = await this.prismaService.$queryRaw<{ rank: number }[]>`
-      SELECT ranked."rank"::int AS rank
-      FROM (
-        SELECT
-          id,
-          DENSE_RANK() OVER (
-            ORDER BY
-              CASE
-                WHEN "totalVotes" > 0
-                THEN "points"::numeric / "totalVotes"
-                ELSE 0
-              END DESC
-          ) AS "rank"
-        FROM "Character"
-      ) AS ranked
-      WHERE ranked.id = ${characterId}
+    const character = await this.prismaService.character.findUnique({
+      where: { id: characterId },
+      select: { rating: true },
+    });
+
+    if (!character) {
+      return null;
+    }
+
+    const result = await this.prismaService.$queryRaw<{ count: bigint }[]>`
+      SELECT COUNT(DISTINCT rating) AS count
+      FROM "Character"
+      WHERE rating > ${character.rating}
     `;
 
-    return result[0]?.rank ?? null;
+    return Number(result[0].count) + 1;
   }
 
   async updateCharacter(
@@ -187,20 +184,33 @@ export class CharactersService {
       points?: number;
     },
   ) {
-    await tx.character.update({
-      where: { id: characterId },
-      data: {
-        ...(delta.totalVotes !== undefined && {
-          totalVotes: { increment: delta.totalVotes },
-        }),
-        ...(delta.evilVotes !== undefined && {
-          evilVotes: { increment: delta.evilVotes },
-        }),
-        ...(delta.points !== undefined && {
-          points: { increment: delta.points },
-        }),
-      },
-    });
+    const totalVotesDelta = delta.totalVotes ?? 0;
+    const evilVotesDelta = delta.evilVotes ?? 0;
+    const pointsDelta = delta.points ?? 0;
+
+    await tx.$executeRaw`
+      UPDATE "Character"
+      SET
+        "totalVotes" = "totalVotes" + ${totalVotesDelta},
+        "evilVotes" = "evilVotes" + ${evilVotesDelta},
+        "points" = "points" + ${pointsDelta},
+        "rating" = CASE
+          WHEN "totalVotes" + ${totalVotesDelta} = 0 THEN 0
+          ELSE ROUND(
+            (
+              "points" + ${pointsDelta} - "totalVotes" - ${totalVotesDelta}
+            )::numeric / (2 * ("totalVotes" + ${totalVotesDelta})) * 100
+          )::int
+        END,
+        "karma" = CASE
+          WHEN "totalVotes" + ${totalVotesDelta} = 0 THEN 0
+          ELSE ROUND(
+            ("evilVotes" + ${evilVotesDelta})::numeric
+              / ("totalVotes" + ${totalVotesDelta}) * 100
+          )::int
+        END
+      WHERE id = ${characterId}
+    `;
   }
 
   async updateCharacterRatingInfo(id: number): Promise<void> {

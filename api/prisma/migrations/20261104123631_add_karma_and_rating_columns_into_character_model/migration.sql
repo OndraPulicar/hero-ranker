@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "Character" ADD COLUMN     "karma" INTEGER NOT NULL DEFAULT 0,
+ADD COLUMN     "rating" INTEGER NOT NULL DEFAULT 0;
