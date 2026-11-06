@@ -77,14 +77,10 @@ export default function CharacterDetailView({
 
             <div className="flex items-baseline rounded-2xl bg-[#facc15] px-4 py-3 text-black">
               <span className="text-3xl font-black md:text-4xl">
-                {character.points === 0
-                  ? 'N/A'
-                  : Math.round(
-                      (character.points / character.totalVotes / 3) * 10,
-                    )}
+                {character.points === 0 ? 'N/A' : character.rating}
               </span>
               <span className="ml-1 text-xs font-bold opacity-75">
-                {character.points !== 0 ? '/10' : ''}
+                {character.points !== 0 ? '%' : ''}
               </span>
             </div>
           </div>
@@ -96,7 +92,7 @@ export default function CharacterDetailView({
                 style={{
                   left:
                     character.evilVotes > 0
-                      ? (character.evilVotes / character.totalVotes) * 100 + '%'
+                      ? character.karma + '%'
                       : character.totalVotes > 0
                         ? '0%'
                         : '50%',
