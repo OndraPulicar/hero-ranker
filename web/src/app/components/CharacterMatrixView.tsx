@@ -26,13 +26,16 @@ export default function CharacterMatrixView({
   const characterGroups = new Map<string, CharacterGroup>();
   for (const character of characters) {
     const karma = character.totalVotes > 0 ? character.karma : 50;
-    const rating = character.rating;
-    const key = `${karma}:${rating}`;
+    const key = `${karma}:${character.rating}`;
     const group = characterGroups.get(key);
     if (group) {
       group.characters.push(character);
     } else {
-      characterGroups.set(key, { characters: [character], karma, rating });
+      characterGroups.set(key, {
+        characters: [character],
+        karma,
+        rating: character.rating,
+      });
     }
   }
 
