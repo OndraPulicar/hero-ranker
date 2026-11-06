@@ -13,14 +13,6 @@ export default function CharacterAvatar({
   size = 'normal',
 }: CharacterAvatarProps) {
   const isSmall = size === 'small';
-  const rating =
-    character.totalVotes > 0
-      ? ((character.points / character.totalVotes / 3) * 10).toFixed(1)
-      : 'N/A';
-  const evilPercentage =
-    character.totalVotes > 0
-      ? Math.round((character.evilVotes / character.totalVotes) * 100)
-      : null;
 
   return (
     <Link
@@ -46,10 +38,10 @@ export default function CharacterAvatar({
         className="pointer-events-none absolute bottom-full left-1/2 z-10 mb-2 w-48 -translate-x-1/2 rounded-lg bg-[#16181f] px-3 py-2 text-left text-xs text-white opacity-0 shadow-xl transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100"
       >
         <span className="block font-bold">{character.name}</span>
-        <span className="mt-1 block">Rating: {rating}/10</span>
+        <span className="mt-1 block">Rating: {character.rating}%</span>
         <span className="block">
           Karma:{' '}
-          {evilPercentage === null ? 'No votes' : `${evilPercentage}% evil`}
+          {character.totalVotes === 0 ? 'No votes' : `${character.karma}% evil`}
         </span>
         <span className="block">
           {character.totalVotes} {character.totalVotes === 1 ? 'vote' : 'votes'}
