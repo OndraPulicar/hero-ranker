@@ -15,6 +15,8 @@ const createCharacter = (overrides = {}) => ({
   evilVotes: 0,
   points: 2,
   imageKey: null,
+  rating: 50,
+  karma: 0,
   ...overrides,
 });
 
